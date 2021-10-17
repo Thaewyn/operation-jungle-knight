@@ -1,0 +1,23 @@
+{
+  "name": "operation-jungle-knight",
+  "version": "0.0.1",
+  "description": "open source web-based rogue-lite game",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Thaewyn/operation-jungle-knight.git"
+  },
+  "author": "Max VanDuyne",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Thaewyn/operation-jungle-knight/issues"
+  },
+  "homepage": "https://github.com/Thaewyn/operation-jungle-knight#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
