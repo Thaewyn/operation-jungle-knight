@@ -13,10 +13,26 @@ module.exports = function(app) {
   });
 
   /**
+   * Session setup
+   */
+  // app.use((req,res,next) => {
+  //   // will be called in EVERY CONTACT.
+  // })
+  /**
    * Run Routes
    */
   app.get("/run", function(req,res) {
     // redirect based on current run state of sesion user
+    //FIXME: DEBUG ONLY
+    req.session.userid = 1;
+    if(req.session && req.session.runid) {
+      //no idea if this will be a problem, but we should only redirect if the session has a run id
+      // we should also DEFINITELY verify that the run id is both valid and active and matches the user before anything else.
+      res.redirect('/run/server');
+    } else {
+      //new run.
+      res.sendFile(path.join(__dirname, '../pages/newrun.html'));
+    }
   });
   app.get("/run/history", function(req,res) {
     //get run history
