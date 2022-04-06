@@ -45,9 +45,6 @@ module.exports = function(app) {
     //select server to approach
     res.sendFile(path.join(__dirname, '../pages/select.html'))
   });
-  app.post("/run/server/:id", function(req,res) {
-    //player selects a server to approach. Handle as appropriate.
-  })
   app.get("/run/encounter", function(req,res) {
     res.sendFile(path.join(__dirname, '../pages/encounter.html'))
   });
