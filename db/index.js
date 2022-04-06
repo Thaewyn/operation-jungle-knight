@@ -3,7 +3,7 @@ const mysql = require('mysql2');
 const conn = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-	password: '', //FIXME: use .env data or process string not demo junk.
+	password: process.env.MYSQL_PASS,
 	database: 'jungleknight'
 });
 
