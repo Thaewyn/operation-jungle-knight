@@ -38,7 +38,7 @@ module.exports = function(app) {
     dbc.startNewRun(req.session.userid, req.body.seed).then((result) => {
       console.log("new run created successfully?");
       console.log(result.insertId);
-      crypto.createHash('sha256')
+      crypt.createHash('sha256')
       req.session.runid = result.insertId;
       res.json({success: true, runid: result.insertId});
     }).catch((err) => {
@@ -46,6 +46,10 @@ module.exports = function(app) {
     })
   });
 
+  app.post("/api/run/server/:id", function(req,res) {
+    //player selects a server to approach. Handle as appropriate.
+    res.json({success:false, msg: "server selected: "+req.params.id})
+  });
   app.get("/api/server/data", (req,res) => {
     //asynchronous function to send page data to server selection page for a single run.
     dbc.getServerSelection(req.session.userid, req.session.runid).then(result => {

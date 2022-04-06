@@ -46,12 +46,15 @@ class DBController {
         // process run seed from appropriate data
         resolve({
           server1: {
+            id:1,
             name:"test one"
           },
           server2: {
+            id:2,
             name: "test B"
           },
           server3: {
+            id:3,
             name: "other test"
           }
         });
