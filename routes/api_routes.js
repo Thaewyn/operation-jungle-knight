@@ -1,5 +1,6 @@
 const DBController = require('../controllers/db_controller');
 const dbc = new DBController();
+const crypt = require('crypto');
 
 module.exports = function(app) {
 
@@ -37,6 +38,7 @@ module.exports = function(app) {
     dbc.startNewRun(req.session.userid, req.body.seed).then((result) => {
       console.log("new run created successfully?");
       console.log(result.insertId);
+      crypto.createHash('sha256')
       req.session.runid = result.insertId;
       res.json({success: true, runid: result.insertId});
     }).catch((err) => {

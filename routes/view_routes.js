@@ -17,7 +17,10 @@ module.exports = function(app) {
    */
   // app.use((req,res,next) => {
   //   // will be called in EVERY CONTACT.
+  //  check to see if runid exists, get runid
+  //  check to see if seed exists, generate seed string hash
   // })
+
   /**
    * Run Routes
    */
@@ -53,7 +56,7 @@ module.exports = function(app) {
   });
   app.post("/run/encounter/turn", function(req,res) {
     //player submits their turn end data. Handle as appropriate.
-  })
+  });
 
   /**
    * Player routes
