@@ -61,6 +61,39 @@ class DBController {
       });
     })
   }
+
+  getEncounterData(runid) {
+    console.log("DBController.getEncounterData called")
+    return new Promise((resolve, reject) => {
+      let querystring = 'SELECT * FROM runencounter WHERE runid_fk = ?';
+      db.query(querystring, [runid], (err, result) => {
+        if (err) {
+          reject(err);
+        }
+
+        resolve({
+          msg: "got encounter data.",
+          ice: [
+            {
+              id: 7,
+              name: "Firewall",
+              hp: 10
+            },
+            {
+              id: 15,
+              name: "Worm",
+              hp: 7
+            },
+            {
+              id: 3,
+              name: "Sentry",
+              hp: 15
+            }
+          ]
+        })
+      })
+    })
+  }
 }
 
 module.exports = DBController;

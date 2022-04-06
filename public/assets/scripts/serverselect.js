@@ -41,5 +41,6 @@ picker.addEventListener('click',(e) => {
   }).then(res => res.json())
   .then(data => {
     console.log(data);
+    window.location = "/run/encounter";
   });
 })
