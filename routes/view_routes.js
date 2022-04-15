@@ -51,9 +51,6 @@ module.exports = function(app) {
   app.get("/run/encounter/log", function(req,res) {
     //get data for current run encounter. send json
   });
-  app.post("/run/encounter/turn", function(req,res) {
-    //player submits their turn end data. Handle as appropriate.
-  });
 
   /**
    * Player routes

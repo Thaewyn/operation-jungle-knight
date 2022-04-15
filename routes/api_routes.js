@@ -1,6 +1,8 @@
 const DBController = require('../controllers/db_controller');
 const dbc = new DBController();
 const crypt = require('crypto');
+const GameController = require('../controllers/game_controller');
+const gc = new GameController();
 
 module.exports = function(app) {
 
@@ -100,5 +102,13 @@ module.exports = function(app) {
         }
       ]
     })
-  })
+  });
+
+  app.post("/api/encounter/turn", function(req,res) {
+    //player submits their turn end data. Handle as appropriate.
+    //TODO: brief data corruption validation. Logic validation happens elsewhere.
+    console.log(req.body)
+    result = gc.handleCombat(req.session.userid, req.session.runid, req.body);
+    res.json({msg:"submitted successfully.", data: result})
+  });
 }
