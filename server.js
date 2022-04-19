@@ -1,6 +1,7 @@
 const express = require("express");
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
+require('dotenv').config()
 // const db = require('./db');
 const path = require('path');
 const PORT = process.env.PORT || 3001;
@@ -15,7 +16,7 @@ const sessionStore = new MySQLStore({
 	host: 'localhost',
 	port: 3306,
 	user: 'root',
-	password: '',
+	password: process.env.MYSQL_PASS,
 	database: 'jungleknight'
 });
 app.use(session({
