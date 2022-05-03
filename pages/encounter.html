@@ -5,24 +5,34 @@
     <link rel="stylesheet" href="/assets/styles/main.css">
   </head>
   <body>
-    <h1>Encounter page</h1>
-    <p>If an encounter is live, this is the page for it.</p>
-    <ul>
-      <li>If the player is not on a run, they are forwarded to the 'start new run' page</li>
-      <li>If they are on a run but not on an encounter, they are forwarded to the 'select' or 'rewards' page as appropriate.</li>
-    </ul>
-    <p>If they are on an encounter, show enemies, show stats, show available actions, etc.</p>
-    <p>Allow the player to select and submit their intended actions for the turn.</p>
-    <p>After submit, show the player the results of these actions (refreshing page if necessary)</p>
-    <div class="enemies">
-      <ul id="enemy_list"></ul>
-    </div>
-    <div class="player">
-      <ul id="player_attacks"></ul>
-    </div>
-    <div class="submit">
-      <button id="submit_turn">Run Commands</button>
-    </div>
+    <section class="main_content">
+      <h1>Encounter page</h1>
+      <p>If an encounter is live, this is the page for it.</p>
+      <ul>
+        <li>If the player is not on a run, they are forwarded to the 'start new run' page</li>
+        <li>If they are on a run but not on an encounter, they are forwarded to the 'select' or 'rewards' page as appropriate.</li>
+      </ul>
+      <p>If they are on an encounter, show enemies, show stats, show available actions, etc.</p>
+      <p>Allow the player to select and submit their intended actions for the turn.</p>
+      <p>After submit, show the player the results of these actions (refreshing page if necessary)</p>
+      <div class="enemies">
+        <ul id="enemy_list"></ul>
+      </div>
+      <div class="player">
+        <ul id="player_attacks"></ul>
+      </div>
+      <div class="submit">
+        <button id="submit_turn">Run Commands</button>
+      </div>
+    </section>
+    <section class="lightbox">
+      <div class="modal">
+        <p class="msg">This is a modal!</p>
+        <div class="closebutton">
+          <a href="#">X</a>
+        </div>
+      </div>
+    </section>
     <script src="/assets/scripts/main.js"></script>
     <script src="/assets/scripts/encounter.js"></script>
   </body>

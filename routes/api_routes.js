@@ -40,7 +40,7 @@ module.exports = function(app) {
     dbc.startNewRun(req.session.userid, req.body.seed).then((result) => {
       console.log("new run created successfully?");
       console.log(result.insertId);
-      crypt.createHash('sha256')
+      //crypt.createHash('sha256')
       req.session.runid = result.insertId;
       res.json({success: true, runid: result.insertId});
     }).catch((err) => {
