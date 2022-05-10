@@ -55,6 +55,10 @@ module.exports = function(app) {
     //encounter victory reward selection screen
     res.sendFile(path.join(__dirname, '../pages/rewards.html'))
   })
+  app.get("/run/gameover", function(req,res) {
+    // game ended, either in success or failure.
+    res.sendFile(path.join(__dirname, '../pages/runover.html'));
+  })
 
   /**
    * Player routes

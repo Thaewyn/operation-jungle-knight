@@ -80,11 +80,16 @@ document.getElementById("submit_turn").addEventListener("click", (e) => {
 function handleTurnResults(api_data) {
   let thingsToAnimate = api_data.data.actions;
   let statusToUpdate = api_data.data.next_turn;
-  if(api_data.data.victory) {
+  if (api_data.data.victory) {
     //what do we do when the player wins?
     //display modal with victory message
     displayModal("You Win!")
-    document.querySelector(".modal .victory").style.display = "block";
+    if(api_data.data.gameover) {
+      // player has won the entire run
+      document.querySelector(".modal .runcomplete").style.display = "block";
+    } else {
+      document.querySelector(".modal .victory").style.display = "block";
+    }
   } else if (api_data.data.defeat) {
     //what do we do when the player loses?
   }

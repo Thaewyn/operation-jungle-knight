@@ -21,10 +21,13 @@ class GameController {
     // they also can't submit more actions than their maximum actions per turn.
     // either of those cases will return an error.
 
+    // get user game session information from database
+
     this.validateTurnSubmission();
 
     let result_mock = {
       victory: true,
+      gameover: false,
       defeat: false,
       actions: [ //'actions' is basically a script for the front-end to animate, so make sure to include all required bits there.
         {
@@ -87,6 +90,8 @@ class GameController {
     this.handlePlayerAttacks();
     this.handleStatusEffects();
     this.handleEnemyAttacks();
+
+    
 
     return result_mock;
   }

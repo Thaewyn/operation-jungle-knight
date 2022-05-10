@@ -85,7 +85,7 @@ module.exports = function(app) {
    * For the Encounter page, get a player's attacks and cooldown status
    */
   app.get("/api/player/attacks", (req,res) => {
-    //eventually grab from data somewhere.
+    // TODO: eventually grab from data somewhere.
     res.json({
       attacks: [
         {
@@ -106,9 +106,20 @@ module.exports = function(app) {
 
   app.post("/api/encounter/turn", function(req,res) {
     //player submits their turn end data. Handle as appropriate.
-    //TODO: brief data corruption validation. Logic validation happens elsewhere.
+    // TODO: brief data corruption validation. Logic validation happens elsewhere.
     console.log(req.body)
     result = gc.handleCombat(req.session.userid, req.session.runid, req.body);
+    // FIXME: DEBUG LOGIC
+    if(req.session.encounters) {
+      req.session.encounters += 1
+      if(req.session.encounters > 1) {
+        result.gameover = true
+      }
+    } else {
+      req.session.encounters = 1
+    }
+    console.log("encounters:"+req.session.encounters);
+    // end DEBUG LOGIC
     res.json({msg:"submitted successfully.", data: result})
   });
 
@@ -141,6 +152,13 @@ module.exports = function(app) {
     // respond to front end with success message, then front-end redirects.
     res.status(200).json({
       status: "success"
+    })
+  });
+
+  app.get("/api/gameover", function(req,res) {
+    //get the gameover state for the current player
+    res.json({
+      victory: true
     })
   })
 }

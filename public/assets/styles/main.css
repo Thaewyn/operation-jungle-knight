@@ -57,6 +57,9 @@ body {
 .modal .victory {
   display:none;
 }
+.modal .runcomplete {
+  display:none;
+}
 
 @media only screen and (max-width: 1200px) {
   .main_content {
