@@ -24,7 +24,7 @@ class GameController {
     this.validateTurnSubmission();
 
     let result_mock = {
-      victory: false,
+      victory: true,
       defeat: false,
       actions: [ //'actions' is basically a script for the front-end to animate, so make sure to include all required bits there.
         {

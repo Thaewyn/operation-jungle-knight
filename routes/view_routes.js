@@ -51,6 +51,10 @@ module.exports = function(app) {
   app.get("/run/encounter/log", function(req,res) {
     //get data for current run encounter. send json
   });
+  app.get("/run/encounter/rewards", function(req,res) {
+    //encounter victory reward selection screen
+    res.sendFile(path.join(__dirname, '../pages/rewards.html'))
+  })
 
   /**
    * Player routes

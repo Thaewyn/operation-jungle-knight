@@ -111,4 +111,36 @@ module.exports = function(app) {
     result = gc.handleCombat(req.session.userid, req.session.runid, req.body);
     res.json({msg:"submitted successfully.", data: result})
   });
+
+  app.get("/api/encounter/rewards", function(req,res) {
+    res.json({ //FIXME: replace with actual item fetching.
+      items: [
+        {
+          type: "hardware",
+          name: "VR Gloves",
+          id: 5
+        },
+        {
+          type: "software",
+          name: "Antivirus",
+          id: 7
+        },
+        {
+          type: "software",
+          name: "New attack thingy",
+          id: 3
+        },
+      ]
+    })
+  });
+
+  app.post("/api/encounter/rewards/:id", function(req,res) {
+    // user selected reward with id `req.params.id`
+    // validate that the selected id is one of the avaialble options
+    // add to user's session/run data.
+    // respond to front end with success message, then front-end redirects.
+    res.status(200).json({
+      status: "success"
+    })
+  })
 }
