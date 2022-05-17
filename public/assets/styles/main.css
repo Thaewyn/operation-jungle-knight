@@ -9,3 +9,72 @@
 body {
   background-color: var(--bluegrey);
 }
+
+.main_content {
+  max-width: 1200px;
+  margin: auto;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  padding: 1em;
+  z-index: 1;
+}
+/* display 'flex' to reveal, not block.*/
+.lightbox {
+  display: none;
+  z-index: 5;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.3);
+  position: absolute;
+  top: 0;
+  left: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  z-index: 6;
+  width: 400px;
+  height: 300px;
+  border: 1px solid black;
+  border-radius: 20px;
+  background-color: white;
+  padding: 20px;
+  position: relative;
+}
+
+.closebutton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.closebutton > a {
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.modal .victory {
+  display:none;
+}
+.modal .runcomplete {
+  display:none;
+}
+
+@media only screen and (max-width: 1200px) {
+  .main_content {
+    max-width: 900px;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .main_content {
+    max-width: 600px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .main_content {
+    max-width: 100%;
+  }
+}

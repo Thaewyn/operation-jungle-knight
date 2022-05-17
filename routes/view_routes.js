@@ -17,7 +17,10 @@ module.exports = function(app) {
    */
   // app.use((req,res,next) => {
   //   // will be called in EVERY CONTACT.
+  //  check to see if runid exists, get runid
+  //  check to see if seed exists, generate seed string hash
   // })
+
   /**
    * Run Routes
    */
@@ -42,17 +45,19 @@ module.exports = function(app) {
     //select server to approach
     res.sendFile(path.join(__dirname, '../pages/select.html'))
   });
-  app.post("/run/server/:id", function(req,res) {
-    //player selects a server to approach. Handle as appropriate.
-  })
   app.get("/run/encounter", function(req,res) {
     res.sendFile(path.join(__dirname, '../pages/encounter.html'))
   });
   app.get("/run/encounter/log", function(req,res) {
     //get data for current run encounter. send json
   });
-  app.post("/run/encounter/turn", function(req,res) {
-    //player submits their turn end data. Handle as appropriate.
+  app.get("/run/encounter/rewards", function(req,res) {
+    //encounter victory reward selection screen
+    res.sendFile(path.join(__dirname, '../pages/rewards.html'))
+  })
+  app.get("/run/gameover", function(req,res) {
+    // game ended, either in success or failure.
+    res.sendFile(path.join(__dirname, '../pages/runover.html'));
   })
 
   /**
