@@ -24,6 +24,8 @@ module.exports = function(app) {
    */
   app.post("/api/login", function(req,res) {
     console.log("login attempt");
+    console.log(req.body);
+    res.json({success: "true"})
   });
   app.post("/api/logout", function(req,res) {
     console.log("logout current user");
