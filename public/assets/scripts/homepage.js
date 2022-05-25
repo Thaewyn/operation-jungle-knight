@@ -23,6 +23,8 @@ document.querySelector("#loginform").addEventListener("submit", (e) => {
     // console.log(el.type)
     if (el.type == "text") {
       data.user = el.value
+    } else if (el.type == "email") {
+      data.email = el.value
     } else if (el.type == "password") {
       // console.log("get password?");
       // console.log(el)

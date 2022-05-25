@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Thaewyn/operation-jungle-knight#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "dotenv": "^16.0.0",
     "express": "^4.17.1",
     "express-mysql-session": "^2.1.7",

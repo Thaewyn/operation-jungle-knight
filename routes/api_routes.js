@@ -1,6 +1,6 @@
 const DBController = require('../controllers/db_controller');
 const dbc = new DBController();
-const crypt = require('crypto');
+//const crypt = require('crypto');
 const GameController = require('../controllers/game_controller');
 const gc = new GameController();
 
@@ -23,13 +23,54 @@ module.exports = function(app) {
    * Account routes
    */
   app.post("/api/login", function(req,res) {
-    console.log("login attempt");
-    console.log(req.body);
-    res.json({success: "true"})
+    dbc.findUserByEmail(req.body.email).then((result) => {
+      if(result[0]) {
+        if(dbc.validatePassword(result[0].pass, req.body.pass)) {
+          req.session.save(() => {
+            req.session.loggedIn = true;
+            res.status(200).json({msg: "Log in success", success: "true"});
+          })
+        } else {
+          res.status(401).json({msg: "Failed to log in."});
+        }
+      } else {
+        res.status(401).json({msg: "Failed to log in."});
+      }
+    })
   });
   app.post("/api/logout", function(req,res) {
-    console.log("logout current user");
+    if(req.session.loggedIn) {
+      req.session.destroy(() => {
+        res.status(204).end()
+      })
+    } else {
+      res.status(404).end();
+    }
   });
+  app.post("/api/user/create", function(req,res) {
+    dbc.findUserByEmail(req.body.email).then((result) => {
+      if(result[0]) {
+        res.status(500).json({msg:"User Create Failed."});
+      } else {
+        dbc.createNewUser(req.body).then((result) => {
+          if(result.affectedRows) {
+            req.session.save(() => {
+              req.session.loggedIn = true;
+              res.status(200).json({created:"true"})
+            })
+          } else {
+            res.status(500).json({msg:"User Create Failed."});
+          }
+        }).catch(err => {
+          console.log(err);
+          res.status(500).json({msg:"User Create Failed."});
+        })
+      }
+    }).catch(err => {
+      console.log(err);
+      res.status(500).json({msg:"User Create Failed."});
+    })
+  })
 
   /**
    * Functional routes

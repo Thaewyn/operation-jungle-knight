@@ -8,6 +8,7 @@ CREATE TABLE users (
   id INT NOT NULL AUTO_INCREMENT,
   username VARCHAR(255) NOT NULL,
   pass VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
   create_date TIMESTAMP,
   last_login TIMESTAMP,
   currentrunid_fk INT,
