@@ -1,4 +1,5 @@
 const db = require('../db');
+const bcrypt = require('bcrypt');
 
 //console.log("for the handling of all database things.")
 
@@ -93,6 +94,54 @@ class DBController {
         })
       })
     })
+  }
+
+  findUserByEmail(email) {
+    // console.log("DBController.findUserByEmail called");
+    return new Promise((resolve, reject) => {
+      let querystring = 'SELECT * FROM users WHERE email = ?';
+      db.query(querystring, [email], (err, result) => {
+        if (err) {
+          reject(err);
+        }
+
+        resolve(result);
+      })
+    })
+  }
+
+  /**
+   * createNewUser attempts to create a new user in the database, and also first encrypts the password
+   * @param {Object} userobj the request body of the user to create. Must include properties user, pass, and email
+   * @returns Promise containing the database insertion attempt
+   */
+  createNewUser(userobj) {
+    return new Promise((resolve, reject) => {
+      if(userobj.user && userobj.pass && userobj.email) {
+        bcrypt.hash(userobj.pass, 10).then(encrypted => {
+          let querystring = 'INSERT INTO users (username, pass, email) VALUES (?, ?, ?)';
+          db.query(querystring, [userobj.user, encrypted, userobj.email], (err, result) => {
+            if (err) {
+              reject(err);
+            }
+    
+            resolve(result);
+          });
+        })
+      } else {
+        reject("Could not create new user.")
+      }
+    })
+  }
+
+  /**
+   * Attempts to validate password using bcrypt
+   * @param {String} existingUserPass password of user in the database
+   * @param {String} submittedPass password subbitted for login
+   * @returns boolean of success or failure
+   */
+  validatePassword(existingUserPass, submittedPass) {
+    return bcrypt.compareSync(submittedPass, existingUserPass);
   }
 }
 

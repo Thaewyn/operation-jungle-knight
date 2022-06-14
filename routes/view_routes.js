@@ -11,6 +11,9 @@ module.exports = function(app) {
     //main menu
     res.sendFile(path.join(__dirname, '../pages/menu.html'))
   });
+  app.get("/account/create", function(req,res) {
+    res.sendFile(path.join(__dirname, '../pages/createaccount.html'))
+  })
 
   /**
    * Session setup
