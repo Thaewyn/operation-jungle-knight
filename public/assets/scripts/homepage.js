@@ -48,8 +48,9 @@ document.querySelector("#loginform").addEventListener("submit", (e) => {
     .then((data) => {
       console.log("success")
       console.log(data);
+      // FIXME
       // if(data.success) {
-      //   //window.location.reload();
+      //   window.location.reload();
       // } else {
       //   //error?
       // }

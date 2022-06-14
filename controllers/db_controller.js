@@ -1,5 +1,6 @@
 const db = require('../db');
 const bcrypt = require('bcrypt');
+const encounter_ref = require("../db/encounter_ref.json");
 
 //console.log("for the handling of all database things.")
 
@@ -36,15 +37,30 @@ class DBController {
    * @returns 3 server options
    */
   getServerSelection(userid, runid) {
-    //console.log("DBController.getserverselection");
+    console.log("DBController.getserverselection");
+    console.log("userid = "+userid+", runid = "+runid);
     return new Promise((resolve, reject) => {
-      let querystring = 'SELECT * FROM run WHERE id = ? AND userid_fk = ?';
+      let querystring = 'SELECT * FROM run WHERE id = ? AND userid_fk = ? AND is_active = 1';
       db.query(querystring, [runid, userid], (err, result) => {
         if (err) {
           reject(err);
         }
+        /* DB schema
+        id INT NOT NULL AUTO_INCREMENT,
+        userid_fk INT NOT NULL,
+        act_num INT DEFAULT 1,
+        encounter_num INT DEFAULT NULL,
+        seed VARCHAR(255),
+        */
         //get run seed, act number, etc
         // process run seed from appropriate data
+        //grab data from encounter_ref.json
+        // let data = JSON.parse(encounter_ref)
+        // let encounters = {
+        //   encounter_ref.act_one[1],
+        //   encounter_ref.act_one[2]
+        // };
+        // resolve(encounters);
         resolve({
           server1: {
             id:1,

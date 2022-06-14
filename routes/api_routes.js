@@ -28,6 +28,7 @@ module.exports = function(app) {
         if(dbc.validatePassword(result[0].pass, req.body.pass)) {
           req.session.save(() => {
             req.session.loggedIn = true;
+            req.session.userid = result[0].id;
             res.status(200).json({msg: "Log in success", success: "true"});
           })
         } else {
@@ -56,6 +57,7 @@ module.exports = function(app) {
           if(result.affectedRows) {
             req.session.save(() => {
               req.session.loggedIn = true;
+              req.session.userid = result.insertId;
               res.status(200).json({created:"true"})
             })
           } else {
