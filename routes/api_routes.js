@@ -70,7 +70,7 @@ module.exports = function(app) {
       console.log(err);
       res.status(500).json({msg:"User Create Failed."});
     })
-  })
+  });
 
   /**
    * Functional routes

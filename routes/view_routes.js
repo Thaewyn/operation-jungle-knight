@@ -2,14 +2,18 @@ const path = require('path');
 
 module.exports = function(app) {
   app.get("/", function(req,res) {
-    res.sendFile(path.join(__dirname, '../pages/index.html'));
+    if(req.session?.loggedIn) {
+      res.redirect("/menu");
+    } else {
+      res.sendFile(path.join(__dirname, '../pages/index.html'));
+    }
     //console.log("getting root");
     //let data = false;
     //res.render("menu", data);
   });
   app.get("/menu", function(req,res) {
     //main menu
-    res.sendFile(path.join(__dirname, '../pages/menu.html'))
+    res.sendFile(path.join(__dirname, '../pages/menu.html'));
   });
   app.get("/account/create", function(req,res) {
     res.sendFile(path.join(__dirname, '../pages/createaccount.html'))
