@@ -45,36 +45,15 @@ class DBController {
         if (err) {
           reject(err);
         }
-        /* DB schema
-        id INT NOT NULL AUTO_INCREMENT,
-        userid_fk INT NOT NULL,
-        act_num INT DEFAULT 1,
-        encounter_num INT DEFAULT NULL,
-        seed VARCHAR(255),
-        */
         //get run seed, act number, etc
         // process run seed from appropriate data
         //grab data from encounter_ref.json
-        // let data = JSON.parse(encounter_ref)
-        // let encounters = {
-        //   encounter_ref.act_one[1],
-        //   encounter_ref.act_one[2]
-        // };
-        // resolve(encounters);
-        resolve({
-          server1: {
-            id:1,
-            name:"test one"
-          },
-          server2: {
-            id:2,
-            name: "test B"
-          },
-          server3: {
-            id:3,
-            name: "other test"
-          }
-        });
+        let encounters = {
+          server1: encounter_ref.act_one[1],
+          server2: encounter_ref.act_one[2],
+          server3: encounter_ref.act_one[3]
+        };
+        resolve(encounters);
       });
     })
   }
