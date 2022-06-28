@@ -1,5 +1,6 @@
 const db = require('../db');
 const bcrypt = require('bcrypt');
+const encounter_ref = require("../db/encounter_ref.json");
 
 //console.log("for the handling of all database things.")
 
@@ -36,29 +37,23 @@ class DBController {
    * @returns 3 server options
    */
   getServerSelection(userid, runid) {
-    //console.log("DBController.getserverselection");
+    console.log("DBController.getserverselection");
+    console.log("userid = "+userid+", runid = "+runid);
     return new Promise((resolve, reject) => {
-      let querystring = 'SELECT * FROM run WHERE id = ? AND userid_fk = ?';
+      let querystring = 'SELECT * FROM run WHERE id = ? AND userid_fk = ? AND is_active = 1';
       db.query(querystring, [runid, userid], (err, result) => {
         if (err) {
           reject(err);
         }
         //get run seed, act number, etc
         // process run seed from appropriate data
-        resolve({
-          server1: {
-            id:1,
-            name:"test one"
-          },
-          server2: {
-            id:2,
-            name: "test B"
-          },
-          server3: {
-            id:3,
-            name: "other test"
-          }
-        });
+        //grab data from encounter_ref.json
+        let encounters = {
+          server1: encounter_ref.act_one[1],
+          server2: encounter_ref.act_one[2],
+          server3: encounter_ref.act_one[3]
+        };
+        resolve(encounters);
       });
     })
   }

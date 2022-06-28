@@ -11,7 +11,7 @@ function hideModal() {
   document.querySelector(".lightbox").style.display = "none"
 }
 
-document.querySelector(".closebutton > a").addEventListener("click", (e) => {
+document.querySelector(".closebutton > a")?.addEventListener("click", (e) => {
   e.preventDefault();
   hideModal();
 })
