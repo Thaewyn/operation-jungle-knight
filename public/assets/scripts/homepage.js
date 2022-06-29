@@ -46,14 +46,14 @@ document.querySelector("#loginform").addEventListener("submit", (e) => {
     })
     .then((res) => res.json())
     .then((data) => {
-      console.log("success")
       console.log(data);
-      // FIXME
-      // if(data.success) {
-      //   window.location.reload();
-      // } else {
-      //   //error?
-      // }
+      if(data.success) {
+        //window.location.reload();
+        window.location.href = "/menu";
+      } else {
+        //error?
+        document.querySelector(".modal > .msg").innerHTML = "<span class='redalert'>Login credentials incorrect, please try again</span>";
+      }
     })
     .catch((err) => {
       console.error("Error: "+err);
