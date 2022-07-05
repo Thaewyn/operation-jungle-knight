@@ -59,64 +59,17 @@ class DBController {
     })
   }
 
-  getEncounterData(runid) {
-    console.log("DBController.getEncounterData called")
-    return new Promise((resolve, reject) => {
-      // let querystring = 'SELECT * FROM runencounter WHERE runid_fk = ?';
-      // db.query(querystring, [runid], (err, result) => {
-      //   if (err) {
-      //     reject(err);
-      //   }
-
-      //   resolve({
-      //     msg: "got encounter data.",
-      //     ice: [
-      //       {
-      //         id: 7,
-      //         name: "Firewall",
-      //         hp: 10
-      //       },
-      //       {
-      //         id: 15,
-      //         name: "Worm",
-      //         hp: 7
-      //       },
-      //       {
-      //         id: 3,
-      //         name: "Sentry",
-      //         hp: 15
-      //       }
-      //     ]
-      //   })
-      // })
-      if(req.session?.enemies) {
-        resolve({
-          msg: "",
-          ice: req.session.enemies
-        })
-      } else {
-        //error?
-      }
-    })
-  }
-
   /**
    * 
    * @param {string} which_act expects "act_one" or "act_two", etc
    * @param {int} encounter_id the numerical id of the encounter in that act
+   * 
+   * @returns an array containing instances of each enemy in the encounter
    */
   populateEncounterData(which_act, encounter_id) {
     let enemies = [];
 
     let encounter = encounter_ref[which_act][encounter_id]
-    /*
-    {
-      "id": 1,
-      "enemy_ids": [1,2,3],
-      "elite": false,
-      "loot_type": "software"
-    },
-    */
     for(let i=0; i<encounter.enemy_ids.length; i++) {
       let enemy_id = encounter.enemy_ids[i];
       let enemy_template = enemy_ref[enemy_id]

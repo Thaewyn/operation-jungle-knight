@@ -129,12 +129,6 @@ module.exports = function(app) {
    */
   app.get("/api/encounter/data", (req,res) => {
     res.json(req.session.enemies);
-    // dbc.getEncounterData(req.session.runid).then(result => {
-    //   res.json(result);
-    // }).catch(err => {
-    //   console.log(err);
-    //   res.status(500);
-    // })
   });
 
   /**
