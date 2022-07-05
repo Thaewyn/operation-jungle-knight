@@ -15,10 +15,6 @@ module.exports = function(app) {
   // }
   // app.use(sessionPrep);
 
-  app.get("/api/test", function(req,res) {
-    console.log("get /api/test");
-  });
-
   /**
    * Account routes
    */
@@ -72,7 +68,7 @@ module.exports = function(app) {
       console.log(err);
       res.status(500).json({msg:"User Create Failed."});
     })
-  })
+  });
 
   /**
    * Functional routes
@@ -92,6 +88,13 @@ module.exports = function(app) {
       console.log(err);
     })
   });
+  app.get("/api/runstatus", (req, res) => {
+    if(req.session?.runid) {
+      res.json({active: true, runid: req.session.runid});
+    } else {
+      res.json({active: false});
+    }
+  })
 
   /**
    * Select a single server by id, information stored in session, maybe database?
