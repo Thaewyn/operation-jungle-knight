@@ -30,6 +30,10 @@ picker.addEventListener('click',(e) => {
   }).then(res => res.json())
   .then(data => {
     console.log(data);
-    window.location = "/run/encounter";
+    if(data.success) {
+      window.location = "/run/encounter";
+    } else {
+      console.log(data.msg);
+    }
   });
 })

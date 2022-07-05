@@ -98,7 +98,14 @@ module.exports = function(app) {
    */
   app.post("/api/run/server/:id", function(req,res) {
     //player selects a server to approach. Handle as appropriate.
-    res.json({success:false, msg: "server selected: "+req.params.id})
+    //TODO: is the user allowed to select a server at this stage?
+    req.session.enemies = dbc.populateEncounterData("act_one", req.params.id); //FIXME: get actual act name later.
+
+    if(req.session.enemies) {
+      res.json({success:true, msg: "server selected: "+req.params.id});
+    } else {
+      res.json({success:false, msg: "No enemies..."});
+    }
   });
 
   /**
@@ -118,12 +125,13 @@ module.exports = function(app) {
    * Get data for a single encounter, core data function for the Encounters page.
    */
   app.get("/api/encounter/data", (req,res) => {
-    dbc.getEncounterData(req.session.runid).then(result => {
-      res.json(result);
-    }).catch(err => {
-      console.log(err);
-      res.status(500);
-    })
+    res.json(req.session.enemies);
+    // dbc.getEncounterData(req.session.runid).then(result => {
+    //   res.json(result);
+    // }).catch(err => {
+    //   console.log(err);
+    //   res.status(500);
+    // })
   });
 
   /**
