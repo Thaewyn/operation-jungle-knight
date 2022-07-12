@@ -1,0 +1,72 @@
+{
+  "0": {
+    "id": 0,
+    "enemy_name": "Interference Node",
+    "enemy_desc": "Interference node attempts to scramble your connection to the server.",
+    "defence": 0,
+    "damage_type": 0,
+    "damage_name": "scramble",
+    "max_health": 10,
+    "attack_ids": [1,1,5]
+  },
+  "1": {
+    "id": 1,
+    "enemy_name": "Sniffer",
+    "enemy_desc": "Sniffer attempts to identify your precise location.",
+    "defence": 2,
+    "damage_type": 1,
+    "damage_name": "decode",
+    "max_health": 8,
+    "attack_ids": [3,2,4]
+  },
+  "2": {
+    "id": 2,
+    "enemy_name": "Worm",
+    "enemy_desc": "W0rm tries to burrow into your system",
+    "defence": 2,
+    "damage_type": 1,
+    "damage_name": "decode",
+    "max_health": 8,
+    "attack_ids": [3,2,4]
+  },
+  "3": {
+    "id": 3,
+    "enemy_name": "Firewall",
+    "enemy_desc": "Buffs other enemy defense.",
+    "defence": 2,
+    "damage_type": 1,
+    "damage_name": "decode",
+    "max_health": 8,
+    "attack_ids": [3,2,4]
+  },
+  "4": {
+    "id": 4,
+    "enemy_name": "Sentry",
+    "enemy_desc": "Alerts the system when intruders are detected",
+    "defence": 2,
+    "damage_type": 1,
+    "damage_name": "decode",
+    "max_health": 8,
+    "attack_ids": [3,2,4]
+  },
+  "5": {
+    "id": 5,
+    "enemy_name": "Honeypot",
+    "enemy_desc": "Aborbs attacks targeted at other ICE.",
+    "defence": 2,
+    "damage_type": 1,
+    "damage_name": "decode",
+    "max_health": 8,
+    "attack_ids": [3,2,4]
+  },
+  "6": {
+    "id": 6,
+    "enemy_name": "Trapdoor",
+    "enemy_desc": "Trapdoor baits an attack and counterattacks.",
+    "defence": 2,
+    "damage_type": 1,
+    "damage_name": "decode",
+    "max_health": 8,
+    "attack_ids": [3,2,4]
+  }
+}

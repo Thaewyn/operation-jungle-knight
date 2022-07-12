@@ -1,6 +1,7 @@
 const db = require('../db');
 const bcrypt = require('bcrypt');
 const encounter_ref = require("../db/encounter_ref.json");
+const enemy_ref = require("../db/enemy_ref.json");
 
 //console.log("for the handling of all database things.")
 
@@ -58,37 +59,30 @@ class DBController {
     })
   }
 
-  getEncounterData(runid) {
-    console.log("DBController.getEncounterData called")
-    return new Promise((resolve, reject) => {
-      let querystring = 'SELECT * FROM runencounter WHERE runid_fk = ?';
-      db.query(querystring, [runid], (err, result) => {
-        if (err) {
-          reject(err);
-        }
+  /**
+   * 
+   * @param {string} which_act expects "act_one" or "act_two", etc
+   * @param {int} encounter_id the numerical id of the encounter in that act
+   * 
+   * @returns an array containing instances of each enemy in the encounter
+   */
+  populateEncounterData(which_act, encounter_id) {
+    let enemies = [];
 
-        resolve({
-          msg: "got encounter data.",
-          ice: [
-            {
-              id: 7,
-              name: "Firewall",
-              hp: 10
-            },
-            {
-              id: 15,
-              name: "Worm",
-              hp: 7
-            },
-            {
-              id: 3,
-              name: "Sentry",
-              hp: 15
-            }
-          ]
-        })
-      })
-    })
+    let encounter = encounter_ref[which_act][encounter_id]
+    for(let i=0; i<encounter.enemy_ids.length; i++) {
+      let enemy_id = encounter.enemy_ids[i];
+      let enemy_template = enemy_ref[enemy_id]
+      let new_enemy = {
+        ...enemy_template,
+        current_health: enemy_template.max_health,
+        current_defence: enemy_template.defence,
+        status_list: []
+      }
+      enemies.push(new_enemy);
+    }
+
+    return enemies
   }
 
   findUserByEmail(email) {

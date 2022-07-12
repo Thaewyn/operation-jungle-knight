@@ -6,10 +6,10 @@ fetch("/api/encounter/data", {
 .then(data => {
   console.log(data);
   let list = document.getElementById("enemy_list")
-  for(let i=0; i< data.ice.length; i++) {
+  for(let i=0; i< data.length; i++) {
     let enemy = document.createElement('li');
-    enemy.textContent = data.ice[i].name;
-    enemy.dataset.hp = data.ice[i].hp;
+    enemy.textContent = data[i].enemy_name;
+    enemy.dataset.hp = data[i].current_health;
     list.appendChild(enemy);
   }
 });
