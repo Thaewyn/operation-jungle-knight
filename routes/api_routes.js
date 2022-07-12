@@ -116,19 +116,27 @@ module.exports = function(app) {
    */
   app.get("/api/server/data", (req,res) => {
     //asynchronous function to send page data to server selection page for a single run.
-    dbc.getServerSelection(req.session.userid, req.session.runid).then(result => {
-      res.json(result);
-    }).catch(err => {
-      console.log(err);
-      res.status(500);
-    })
+    if (req.session?.userid && req.session?.runid) {
+      dbc.getServerSelection(req.session.userid, req.session.runid).then(result => {
+        res.json(result);
+      }).catch(err => {
+        console.log(err);
+        res.status(500);
+      })
+    } else {
+      res.status(400);
+    }
   })
 
   /**
    * Get data for a single encounter, core data function for the Encounters page.
    */
   app.get("/api/encounter/data", (req,res) => {
-    res.json(req.session.enemies);
+    if(req.session?.enemies) {
+      res.json(req.session.enemies);
+    } else {
+      res.status(400);
+    }
   });
 
   /**
