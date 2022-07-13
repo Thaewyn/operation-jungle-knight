@@ -1,0 +1,25 @@
+{
+  "act_one": {
+    "1": {
+      "id": 1,
+      "enemy_ids": [1,2,3],
+      "elite": false,
+      "loot_type": "software"
+    },
+    "2": {
+      "id": 2,
+      "enemy_ids": [2,3,4],
+      "elite": true,
+      "loot_type": "hardware"
+    },
+    "3": {
+      "id": 3,
+      "enemy_ids": [1,2,6],
+      "elite": true,
+      "loot_type": "software"
+    }
+  },
+  "act_two": {
+
+  }
+}
