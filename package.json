@@ -4,7 +4,7 @@
   "description": "open source web-based rogue-lite game",
   "main": "server.js",
   "scripts": {
-    "test": "mocha",
+    "test": "jest",
     "start": "node server.js"
   },
   "repository": {
@@ -24,5 +24,8 @@
     "express-mysql-session": "^2.1.7",
     "express-session": "^1.17.2",
     "mysql2": "^2.3.3"
+  },
+  "devDependencies": {
+    "jest": "^28.1.1"
   }
 }
