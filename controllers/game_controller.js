@@ -92,6 +92,24 @@ class GameController {
     this.handleEnemyAttacks();
 
     
+    /**
+     * Ability target keywords:
+     * ALL
+     * FRONT1
+     * FRONT2, etc
+     * BACK1
+     * BACK2, etc
+     * SELF
+     * LOWEST
+     * HIGHEST
+     */
+    
+    /**
+     * Ability effect keywords:
+     * HEAL - heal player
+     * DAMAGE - damage enemy
+     * DEFEND - increase player defense
+     */
 
     return result_mock;
   }
@@ -114,6 +132,19 @@ class GameController {
   handleEnemyAttacks(){
     return false;
   }
+
+  /**
+   * Generate a list of valid Software item ids based on inputs
+   * @param {String} seed hex value seed string
+   * @param {Number} userid unique identifier of the user
+   */
+  generateSoftwareRewards(seed, userid) {
+    //TODO: generate ids based on seed data and user data.
+    let list = [1,4,6];
+
+    return list;
+  }
+
 }
 
 module.exports = GameController

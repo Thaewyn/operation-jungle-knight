@@ -182,24 +182,16 @@ module.exports = function(app) {
   });
 
   app.get("/api/encounter/rewards", function(req,res) {
-    res.json({ //FIXME: replace with actual item fetching.
-      items: [
-        {
-          type: "hardware",
-          name: "VR Gloves",
-          id: 5
-        },
-        {
-          type: "software",
-          name: "Antivirus",
-          id: 7
-        },
-        {
-          type: "software",
-          name: "New attack thingy",
-          id: 3
-        },
-      ]
+    //Right now, fixed item IDs, eventually generate item IDs from seed
+    let software_rewards = gc.generateSoftwareRewards(req.session.seed, req.session.userid);
+    let items = [];
+
+    for(let i=0; i<software_rewards.length; i++) {
+      items.push(dbc.getSoftwareDetailsById(software_rewards[i]));
+    }
+
+    res.json({
+      items
     })
   });
 

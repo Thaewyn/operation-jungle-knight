@@ -1,0 +1,71 @@
+{
+  "1": {
+    "id": 1,
+    "name": "ICE Pick",
+    "icon_url": "",
+    "desc": "Standard ICE pick spell, breaks down enemy ICE.",
+    "cooldown": 0,
+    "targets": "FIRST1",
+    "power": 10,
+    "effect": "DAMAGE",
+    "status": [],
+    "cost": 10
+  },
+  "2": {
+    "id": 2,
+    "name": "Fireball",
+    "icon_url": "",
+    "desc": "Hits the first 2 enemies for splash damage, and cause burn.",
+    "cooldown": 2,
+    "targets": "FIRST2",
+    "power": 20,
+    "effect": "DAMAGE",
+    "status": [2],
+    "cost": 10
+  },
+  "3": {
+    "id": 3,
+    "name": "Thumper",
+    "icon_url": "",
+    "desc": "Hits all enemies for moderate damage.",
+    "cooldown": 2,
+    "targets": "ALL",
+    "power": 10,
+    "effect": "DAMAGE",
+    "status": [],
+    "cost": 10
+  },
+  "4": {
+    "id": 4,
+    "name": "Heal",
+    "desc": "Restore a small amount of health",
+    "cooldown": 4,
+    "targets": "SELF",
+    "power": 5,
+    "effect": "HEAL",
+    "status": [],
+    "cost": 10
+  },
+  "5": {
+    "id": 5,
+    "name": "Cleanse",
+    "desc": "Remove burn and poison status effects.",
+    "cooldown": 2,
+    "targets": "SELF",
+    "power": 0,
+    "effect": "HEAL",
+    "status": [2,3],
+    "cost": 10
+  },
+  "6": {
+    "id": 6,
+    "name": "Firewall",
+    "desc": "Increase player defense.",
+    "cooldown": 2,
+    "targets": "SELF",
+    "power": 10,
+    "effect": "DEFEND",
+    "status": [],
+    "cost": 10
+  }
+}
