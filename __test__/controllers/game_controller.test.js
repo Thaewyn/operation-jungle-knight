@@ -1,6 +1,10 @@
 const GameController = require('../../controllers/game_controller.js');
 
 describe("GameController", () => {
+  let gc
+  beforeEach(() => {
+    gc = new GameController();
+  })
   it("should construct a new GameController instance when initialized", () => {
 
     const gameController = new GameController();
@@ -34,5 +38,19 @@ describe("GameController", () => {
 
 
     
+  });
+
+  describe("generateSoftwareRewards", () => {
+    it("should (in testing) return an array with [1,4,6]", () => {
+      expect(gc.generateSoftwareRewards()).toEqual([1,4,6]);
+    });
+
+    it("should return a pseudo-random array of reward ids based on the run seed", () => {
+
+    })
+
+    it("should not return ids of any items that the player already owns", () => {
+      
+    })
   })
 })

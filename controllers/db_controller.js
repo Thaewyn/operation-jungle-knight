@@ -2,6 +2,7 @@ const db = require('../db');
 const bcrypt = require('bcrypt');
 const encounter_ref = require("../db/encounter_ref.json");
 const enemy_ref = require("../db/enemy_ref.json");
+const software_ref = require("../db/software_ref.json");
 
 //console.log("for the handling of all database things.")
 
@@ -131,6 +132,18 @@ class DBController {
    */
   validatePassword(existingUserPass, submittedPass) {
     return bcrypt.compareSync(submittedPass, existingUserPass);
+  }
+
+  /**
+   * Grab all software item information from json reference file.
+   * @param {Number} id 
+   */
+  getSoftwareDetailsById(id) {
+    if(software_ref[id]) {
+      return software_ref[id];
+    } else {
+      return "ERR: No software with that ID";
+    }
   }
 }
 
