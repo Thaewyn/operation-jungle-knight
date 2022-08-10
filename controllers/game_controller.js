@@ -145,6 +145,18 @@ class GameController {
     return list;
   }
 
+  /**
+   * Generate a list of valid Hardware item ids based on inputs
+   * @param {String} seed hex value seed string
+   * @param {Number} userid unique identifier of the user
+   */
+  generateHardwareRewards(seed, userid) {
+    //TODO: generate properly later.
+    let list = [2,3,5];
+
+    return list;
+  }
+
 }
 
 module.exports = GameController

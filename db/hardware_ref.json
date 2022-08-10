@@ -1,0 +1,62 @@
+{
+  "1": {
+    "id": 1,
+    "name": "Omni-drive",
+    "icon_url": "",
+    "description": "Increases software reward options by 1",
+    "timing": "REWARDS",
+    "always_on": true,
+    "rarity": "C",
+    "cost": 10
+  },
+  "2": {
+    "id": 2,
+    "name": "Skulljack",
+    "icon_url": "",
+    "description": "Improves initial Connection by 0.1",
+    "timing": "START",
+    "always_on": true,
+    "rarity": "C",
+    "cost": 10
+  },
+  "3": {
+    "id": 3,
+    "name": "Grimoire",
+    "icon_url": "",
+    "description": "Allows one more software activation, every other turn",
+    "timing": "TURN",
+    "always_on": false,
+    "rarity": "C",
+    "cost": 10
+  },
+  "4": {
+    "id": 4,
+    "name": "Overclocked Processor",
+    "icon_url": "",
+    "description": "Adds 1 strength to all offensive programs",
+    "timing": "DAMAGE",
+    "always_on": true,
+    "rarity": "C",
+    "cost": 10
+  },
+  "5": {
+    "id": 5,
+    "name": "Haptic Bodysuit",
+    "icon_url": "",
+    "description": "Prevents first HP damage each combat",
+    "timing": "DAMAGE",
+    "always_on": false,
+    "rarity": "C",
+    "cost": 10
+  },
+  "6": {
+    "id": 6,
+    "name": "Quantum Interface",
+    "icon_url": "",
+    "description": "If a skill adds a status effect to an enemy, add a random other status effect instead.",
+    "timing": "SKILL",
+    "always_on": true,
+    "rarity": "C",
+    "cost": 10
+  }
+}

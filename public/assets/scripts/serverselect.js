@@ -11,11 +11,12 @@ fetch("/api/server/data", {
     let item = document.createElement('li');
     let link = document.createElement('a');
     link.setAttribute('href','/api/server/'+data[server].id)
-    link.textContent = server;
+    link.textContent = server + " - " + data[server].loot_type;
     link.dataset.id = data[server].id;
     item.appendChild(link);
     list.appendChild(item);
   }
+
 })
 .catch(err => {
   console.log(err);

@@ -1,5 +1,3 @@
-console.log("loaded main.js frontend.");
-
 function displayModal(message) {
   document.querySelector(".lightbox").style.display = "flex"
   if (message) {
@@ -11,21 +9,26 @@ function hideModal() {
   document.querySelector(".lightbox").style.display = "none"
 }
 
-document.querySelector(".closebutton > a")?.addEventListener("click", (e) => {
-  e.preventDefault();
-  hideModal();
-})
+(function() {
+  console.log("loaded main.js frontend.");
 
-document.querySelector("#logoutlink")?.addEventListener("click", e => {
-  e.preventDefault();
-  fetch("/api/logout", {
-    method: "POST",
-    body: "{}"
-  }).then(res => {
-    console.log(res);
-    window.location.href = "/";
+  document.querySelector(".closebutton > a")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    hideModal();
   })
-  .catch(err => {
-    console.log(err);
+
+  document.querySelector("#logoutlink")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    fetch("/api/logout", {
+      method: "POST",
+      body: "{}"
+    }).then(res => {
+      console.log(res);
+      window.location.href = "/";
+    })
+    .catch(err => {
+      console.log(err);
+    });
   });
-})
+
+})();
