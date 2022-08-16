@@ -41,6 +41,7 @@
   "4": {
     "id": 4,
     "name": "Heal",
+    "icon_url": "",
     "desc": "Restore a small amount of health",
     "cooldown": 4,
     "targets": "SELF",
@@ -53,6 +54,7 @@
   "5": {
     "id": 5,
     "name": "Cleanse",
+    "icon_url": "",
     "desc": "Remove burn and poison status effects.",
     "cooldown": 2,
     "targets": "SELF",
@@ -65,6 +67,7 @@
   "6": {
     "id": 6,
     "name": "Firewall",
+    "icon_url": "",
     "desc": "Increase player defense.",
     "cooldown": 2,
     "targets": "SELF",
