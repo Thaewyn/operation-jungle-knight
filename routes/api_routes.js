@@ -102,9 +102,9 @@ module.exports = function(app) {
   app.post("/api/run/server/:id", function(req,res) {
     //player selects a server to approach. Handle as appropriate.
     //TODO: is the user allowed to select a server at this stage?
-    req.session.enemies = dbc.populateEncounterData("act_one", req.params.id); //FIXME: get actual act name later.
+    req.session.encounter = dbc.populateEncounterData("act_one", req.params.id); //FIXME: get actual act name later.
 
-    if(req.session.enemies) {
+    if(req.session.encounter) {
       res.json({success:true, msg: "server selected: "+req.params.id});
     } else {
       res.json({success:false, msg: "No enemies..."});
@@ -132,8 +132,8 @@ module.exports = function(app) {
    * Get data for a single encounter, core data function for the Encounters page.
    */
   app.get("/api/encounter/data", (req,res) => {
-    if(req.session?.enemies) {
-      res.json(req.session.enemies);
+    if(req.session?.encounter) {
+      res.json(req.session.encounter);
     } else {
       res.status(400);
     }
@@ -183,16 +183,42 @@ module.exports = function(app) {
 
   app.get("/api/encounter/rewards", function(req,res) {
     //Right now, fixed item IDs, eventually generate item IDs from seed
-    let software_rewards = gc.generateSoftwareRewards(req.session.seed, req.session.userid);
-    let items = [];
+    if(req.session?.encounter) {
+      if(req.session.encounter.loot_type == "software") {
+        let software_rewards = gc.generateSoftwareRewards(req.session.seed, req.session.userid);
+        let items = [];
+    
+        for(let i=0; i<software_rewards.length; i++) {
+          items.push(dbc.getSoftwareDetailsById(software_rewards[i]));
+        }
+    
+        res.json({
+          items
+        })
+      } else if (req.session.encounter.loot_type == "hardware") {
 
-    for(let i=0; i<software_rewards.length; i++) {
-      items.push(dbc.getSoftwareDetailsById(software_rewards[i]));
+        let hardware_rewards = gc.generateHardwareRewards(req.session.seed, req.session.userid);
+        let items = [];
+
+        for(let i=0; i<hardware_rewards.length; i++) {
+          items.push(dbc.getHardwareDetailsById(hardware_rewards[i]));
+        }
+
+        res.json({
+          items
+        })
+      } else {
+        //no reward type
+        res.json({
+          err: "ERR: No reward type specified for encounter."
+        })
+      }
+    } else {
+      //no encounter data
+      res.json({
+        err: "ERR: No encounter data for session."
+      })
     }
-
-    res.json({
-      items
-    })
   });
 
   app.post("/api/encounter/rewards/:id", function(req,res) {

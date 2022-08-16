@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const encounter_ref = require("../db/encounter_ref.json");
 const enemy_ref = require("../db/enemy_ref.json");
 const software_ref = require("../db/software_ref.json");
+const hardware_ref = require("../db/hardware_ref.json");
 
 //console.log("for the handling of all database things.")
 
@@ -83,7 +84,9 @@ class DBController {
       enemies.push(new_enemy);
     }
 
-    return enemies
+    encounter.enemies = enemies;
+
+    return encounter
   }
 
   findUserByEmail(email) {
@@ -143,6 +146,19 @@ class DBController {
       return software_ref[id];
     } else {
       return "ERR: No software with that ID";
+    }
+  }
+
+  /**
+   * Grab details of hardware item given a specific id.
+   * @param {Number} id unique id of the hardware to be looked up
+   * @returns json of the hardware item details
+   */
+  getHardwareDetailsById(id) {
+    if(hardware_ref[id]) {
+      return hardware_ref[id];
+    } else {
+      return "ERR: No hardware with that ID";
     }
   }
 }

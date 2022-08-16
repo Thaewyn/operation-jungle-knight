@@ -9,6 +9,7 @@
     "power": 10,
     "effect": "DAMAGE",
     "status": [],
+    "rarity": "C",
     "cost": 10
   },
   "2": {
@@ -21,6 +22,7 @@
     "power": 20,
     "effect": "DAMAGE",
     "status": [2],
+    "rarity": "C",
     "cost": 10
   },
   "3": {
@@ -33,39 +35,46 @@
     "power": 10,
     "effect": "DAMAGE",
     "status": [],
+    "rarity": "C",
     "cost": 10
   },
   "4": {
     "id": 4,
     "name": "Heal",
+    "icon_url": "",
     "desc": "Restore a small amount of health",
     "cooldown": 4,
     "targets": "SELF",
     "power": 5,
     "effect": "HEAL",
     "status": [],
+    "rarity": "C",
     "cost": 10
   },
   "5": {
     "id": 5,
     "name": "Cleanse",
+    "icon_url": "",
     "desc": "Remove burn and poison status effects.",
     "cooldown": 2,
     "targets": "SELF",
     "power": 0,
     "effect": "HEAL",
     "status": [2,3],
+    "rarity": "C",
     "cost": 10
   },
   "6": {
     "id": 6,
     "name": "Firewall",
+    "icon_url": "",
     "desc": "Increase player defense.",
     "cooldown": 2,
     "targets": "SELF",
     "power": 10,
     "effect": "DEFEND",
     "status": [],
+    "rarity": "C",
     "cost": 10
   }
 }
