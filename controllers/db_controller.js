@@ -79,12 +79,14 @@ class DBController {
         ...enemy_template,
         current_health: enemy_template.max_health,
         current_defence: enemy_template.defence,
-        status_list: []
+        status_list: [],
+        next_attack_intent: enemy_template.attack_ids[0]
       }
       enemies.push(new_enemy);
     }
 
     encounter.enemies = enemies;
+    encounter.turn = 0;
 
     return encounter
   }

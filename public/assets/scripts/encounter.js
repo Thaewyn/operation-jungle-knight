@@ -26,8 +26,8 @@ fetch("/api/player/attacks", {
     let atk = document.createElement('label');
     //atk.classList.add("action").add("attack");
     //atk.htmlFor = 
-    atk.textContent = data.attacks[i].name;
-    atk.dataset.str = data.attacks[i].str;
+    atk.textContent = data.attacks[i].data.name;
+    atk.dataset.str = data.attacks[i].data.str;
     let chk = document.createElement("input");
     chk.type = "checkbox";
     chk.value = data.attacks[i].id;
@@ -67,7 +67,11 @@ document.getElementById("submit_turn").addEventListener("click", (e) => {
     console.log(submissionData);
     fetch("/api/encounter/turn",{
       method: "POST",
-      body: submissionData
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(submissionData)
     }).then(res => res.json())
     .then(data => {
       console.log("turn submitted, got response from the server:");
