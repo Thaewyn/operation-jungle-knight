@@ -157,6 +157,50 @@ class GameController {
     return list;
   }
 
+  validateRewardSelection(seed, userid, rewardid) {
+    //FIXME: actually validate
+    return true
+  }
+
+  generateDefaultPlayer() {
+    let playerObj = {
+      current_hp: 50,
+      max_hp: 50,
+      current_defense: 0,
+      connection: 1.0,
+      obfuscation: 0,
+      software_list:[{
+        id: 1,
+        cooldown:0
+      }],
+      hardware_list:[{
+        id: 2
+      }],
+      statuses:[]
+    }
+
+    return playerObj;
+  }
+
+  initializePlayerForCombat(current_player) {
+    //if new run, call generateDefaultPlayer, else
+    if(!current_player) {
+      return this.generateDefaultPlayer();
+    } else {
+      let initialized = current_player;
+      initialized.statuses = [];
+      for(let i=0; i<initialized.software_list.length; i++) {
+        initialized.software_list[i].cooldown = 0
+      }
+      initialized.current_defense = 0;
+      initialized.connection = 1.0;
+      initialized.obfuscation = 0;
+
+      //TODO: apply pre-combat relic effects
+
+      return initialized
+    }
+  }
 }
 
 module.exports = GameController

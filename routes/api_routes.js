@@ -83,6 +83,9 @@ module.exports = function(app) {
       console.log(result.insertId);
       //crypt.createHash('sha256')
       req.session.runid = result.insertId;
+
+      req.session.player = gc.generateDefaultPlayer();
+
       res.json({success: true, runid: result.insertId});
     }).catch((err) => {
       console.log(err);
@@ -104,10 +107,19 @@ module.exports = function(app) {
     //TODO: is the user allowed to select a server at this stage?
     req.session.encounter = dbc.populateEncounterData("act_one", req.params.id); //FIXME: get actual act name later.
 
+    //update encounter data with player starting status.
+    if(req.session?.player) {
+      //we already have the player object, initialize for combat
+      req.session.player = gc.initializePlayerForCombat(req.session.player);
+    } else {
+      //no player object, create one for first combat
+      req.session.player = gc.generateDefaultPlayer();
+    }
+
     if(req.session.encounter) {
       res.json({success:true, msg: "server selected: "+req.params.id});
     } else {
-      res.json({success:false, msg: "No enemies..."});
+      res.json({success:false, msg: "Game error: no encounter generated."});
     }
   });
 
@@ -144,29 +156,31 @@ module.exports = function(app) {
    */
   app.get("/api/player/attacks", (req,res) => {
     // TODO: eventually grab from data somewhere.
-    res.json({
-      attacks: [
-        {
-          id: 1,
-          name: "ICE pick",
-          str: 1,
-          cooldown: 0
-        },
-        {
-          id: 2,
-          name: "Thumper",
-          str: 3,
-          cooldown: 2
-        }
-      ]
-    })
+    // console.log("API route handler for player attacks");
+    // console.log(req.session.player);
+
+    if(req.session?.player) {
+      let attackList = req.session.player.software_list;
+      for(let i=0; i<attackList.length; i++) {
+        attackList[i].data = dbc.getSoftwareDetailsById(attackList[i].id);
+      }
+      res.json({
+        attacks: attackList
+      })
+    } else {
+      //error, no player object to get attacks for.
+      res.json({
+        success:false,
+        msg: "Game Error: No player object to get attacks for"
+      });
+    }
   });
 
   app.post("/api/encounter/turn", function(req,res) {
     //player submits their turn end data. Handle as appropriate.
     // TODO: brief data corruption validation. Logic validation happens elsewhere.
     console.log(req.body)
-    result = gc.handleCombat(req.session.userid, req.session.runid, req.body);
+    let result = gc.handleCombat(req.session.userid, req.session.runid, req.body);
     // FIXME: DEBUG LOGIC
     if(req.session.encounters) {
       req.session.encounters += 1
@@ -226,9 +240,25 @@ module.exports = function(app) {
     // validate that the selected id is one of the avaialble options
     // add to user's session/run data.
     // respond to front end with success message, then front-end redirects.
-    res.status(200).json({
-      status: "success"
-    })
+    if (gc.validateRewardSelection(req.session.seed, req.session.userid, req.params.id)) {
+      if(req.session.encounter.loot_type == "software") {
+        req.session.player.software_list.push({
+          id: req.params.id,
+          cooldown: 0
+        });
+      } else if(req.session.encounter.loot_type == "hardware") {
+        req.session.player.hardware_list.push({
+          id: req.params.id
+        });
+      }
+      res.status(200).json({
+        status: "success"
+      })
+    } else {
+      res.status(400).json({
+        status: "Invalid reward id"
+      })
+    }
   });
 
   app.get("/api/gameover", function(req,res) {
