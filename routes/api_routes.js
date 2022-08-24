@@ -179,8 +179,13 @@ module.exports = function(app) {
   app.post("/api/encounter/turn", function(req,res) {
     //player submits their turn end data. Handle as appropriate.
     // TODO: brief data corruption validation. Logic validation happens elsewhere.
-    console.log(req.body)
-    let result = gc.handleCombat(req.session.userid, req.session.runid, req.body);
+    console.log(req.body);
+    let result;
+    if(req.body) {
+      result = gc.handleCombat(req.session, req.body);
+    } else {
+      res.json({msg:"Invalid turn submission", success:false})
+    }
     // FIXME: DEBUG LOGIC
     if(req.session.encounters) {
       req.session.encounters += 1
