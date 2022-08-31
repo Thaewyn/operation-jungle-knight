@@ -120,6 +120,18 @@ describe("GameController", () => {
     
   });
 
+  describe("handlePlayerHeals", () => {
+    it("if the player submitted a 'heal' skill, it should restore the player's HP by that skill's amount", () => {
+
+    })
+    it("if the player is already at full HP, it should activate the skill, but not change the player's HP", () => {
+
+    })
+    it("if the player did not submit any 'heal' skills, it should *not* change the result object at all", () => {
+      
+    })
+  })
+
   describe("generateSoftwareRewards", () => {
     it("should (in testing) return an array with [1,4,6]", () => {
       expect(gc.generateSoftwareRewards()).toEqual([1,4,6]);

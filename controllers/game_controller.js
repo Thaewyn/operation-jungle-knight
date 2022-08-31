@@ -1,4 +1,6 @@
 // console.log("that which does the game logic.")
+const DBController = require('./db_controller');
+const dbc = new DBController();
 
 class GameController {
   constructor() {
@@ -23,31 +25,34 @@ class GameController {
     // get user game session information from database
 
     if(this.validateTurnSubmission(session, turn_data)) {
+      console.log("submission valid");
 
       let result = {
-        victory: true,
+        victory: false,
         gameover: false,
         defeat: false,
         actions: [ //'actions' is basically a script for the front-end to animate, so make sure to include all required bits there.
-          {
-            type: 'player_attack_1',
-            skill_id: 1,
-            target: 1, //NOTE: target is the position id of the affected enemy. 0 means 'no enemies' -1 means 'all enemies'
-            damage: 5,
-            defeated: false //did this attack destroy the enemy?
-          },{
-            type: 'enemy_attack_1',
-            enemy_skill_id: 2,
-            source: 1, //which enemy used the skill
-            damage: 2,
-            defeated: false //FIXME: do we want a distinct property name for player kill vs enemy kill?
-          }
+          // {
+          //   type: 'player_attack_1',
+          //   skill_id: 1,
+          //   target: 1, //NOTE: target is the position id of the affected enemy. 0 means 'no enemies' -1 means 'all enemies'
+          //   damage: 5,
+          //   defeated: false, //did this attack destroy the enemy?
+          //   log_entry: "Player hit Enemy 1 with Attack 1 for 5 damage"
+          // },{
+          //   type: 'enemy_attack_1',
+          //   enemy_skill_id: 2,
+          //   source: 1, //which enemy used the skill
+          //   damage: 2,
+          //   defeated: false, //FIXME: do we want a distinct property name for player kill vs enemy kill?
+          //   log_entry: ""
+          // }
         ],
         next_turn: {
           player: {
-            hp: 30,
-            defense: 5,
-            statuses: [], //both positive and negative.
+            hp: session.player.current_hp,
+            defense: session.player.current_defense,
+            statuses: session.player.statuses, //both positive and negative.
             skills: [] //skill cooldown state.
           },
           enemies: [
@@ -84,11 +89,19 @@ class GameController {
       9: each enemy attack, in order from front to back. No randomness here! This is simply resolving intents.
   
       */
-      result = this.handlePlayerHeals(result, session, turn_data);
-      result = this.handlePlayerDefense(result, session, turn_data);
-      result = this.handlePlayerAttacks(result, session, turn_data);
-      result = this.handleStatusEffects(result, session, turn_data);
-      result = this.handleEnemyAttacks(result, session, turn_data);
+
+      let full_skill_data = [];
+      for (let i = 0; i < turn_data.attacks.length; i++) {
+        const id = turn_data.attacks[i];
+        let skill = dbc.getSoftwareDetailsById(id);
+        full_skill_data.push(skill);
+      }
+
+      result = this.handlePlayerHeals(result, session, full_skill_data);
+      result = this.handlePlayerDefense(result, session, full_skill_data);
+      result = this.handlePlayerAttacks(result, session, full_skill_data);
+      result = this.handleStatusEffects(result, session, full_skill_data);
+      result = this.handleEnemyAttacks(result, session, full_skill_data);
   
       
       /**
@@ -112,6 +125,7 @@ class GameController {
   
       return result;
     } else {
+      console.log("submission invalid, return false");
       //invalid, return something?
       return false
     }
@@ -149,20 +163,68 @@ class GameController {
     }
     //return false;
   }
-  handlePlayerHeals(resultobj, session, submission){
-    return false;
+  handlePlayerHeals(resultobj, session, skill_data){
+    console.log("gc.handlePlayerHeals");
+    // make a copy of the result object
+    let newresult = resultobj;
+    // go through the player submission and see if there are any heal skills
+    let heal_skill_list = [];
+    for (let i = 0; i < skill_data.length; i++) {
+      const skill = skill_data[i];
+      if (skill.effect == "HEAL") {
+        heal_skill_list.push(skill);
+      }
+    }
+    console.log(heal_skill_list);
+    //if there are none, return newresult, otherwise unchanged
+    if(heal_skill_list.length == 0) {
+      return newresult;
+    } else {
+      // if there are heal abilities, iterate through each, and apply their heals
+      // pull out values for player current hp, player max hp
+      // let cur_hp = session.player.current_hp;
+      // let max_hp = session.player.max_hp;
+      for (let j = 0; j < heal_skill_list.length; j++) {
+        const skill = heal_skill_list[j];
+        if (skill.targets == "SELF") {
+          newresult.next_turn.player.hp += skill.power //TODO: modify by connection quality
+
+          //remove statuses if any.
+          for (let k = 0; k < skill.status.length; k++) {
+            const status = skill.status[k];
+            console.log("remove status: "+status);
+            // remove status from next turn player status list
+            newresult.next_turn.player.statuses[status] = 0
+          }
+        }
+
+        //have skill update cooldown and add effect to log
+        let action = {
+          type: 'player_heal',
+          log_entry: skill.desc
+        }
+        newresult.actions.push(action);
+      }
+      console.log("new hp: "+newresult.next_turn.player.hp+", max hp:" +session.player.max_hp)
+      if(newresult.next_turn.player.hp > session.player.max_hp) {
+        newresult.next_turn.player.hp == session.player.max_hp;
+      }
+      // as we iterate, also apply animation 'actions' and log entries
+      // once all iterations are complete, apply final hp values, and return newresult
+      return newresult
+    }
   }
   handlePlayerDefense(resultobj, session, submission){
-    return false;
+    return resultobj;
   }
   handlePlayerAttacks(resultobj, session, submission){
-    return false;
+    return resultobj;
   }
   handleStatusEffects(resultobj, session, submission){
-    return false;
+    return resultobj;
   }
   handleEnemyAttacks(resultobj, session, submission){
-    return false;
+    return resultobj;
   }
 
   /**
@@ -196,19 +258,25 @@ class GameController {
 
   generateDefaultPlayer() {
     let playerObj = {
-      current_hp: 50,
+      current_hp: 30, //FIXME: start at max health
       max_hp: 50,
       current_defense: 0,
       connection: 1.0,
       obfuscation: 0,
-      software_list:[{
+      software_list:[{ //FIXME: set proper initial skill list
         id: 1,
+        cooldown:0
+      },{
+        id: 4,
+        cooldown:0
+      },{
+        id: 5,
         cooldown:0
       }],
       hardware_list:[{
         id: 2
       }],
-      statuses:[]
+      statuses:{}
     }
 
     return playerObj;
@@ -220,7 +288,7 @@ class GameController {
       return this.generateDefaultPlayer();
     } else {
       let initialized = current_player;
-      initialized.statuses = [];
+      initialized.statuses = {burn: 2}; // FIXME: players should not start combat with negative statuses
       for(let i=0; i<initialized.software_list.length; i++) {
         initialized.software_list[i].cooldown = 0
       }
