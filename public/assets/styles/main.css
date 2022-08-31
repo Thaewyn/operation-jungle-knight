@@ -1,23 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Tomorrow&display=swap');
+
 :root {
   --bluegrey: #aaaacd;
+  --teal: #00FFBA;
+  --pink: #ff93ffc0;
+  --purple: #5157cc;
+  --green: #58cf9de0;
+  --white: #FFF;
+  --black: #000;
 }
 
 * {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Roboto Mono', monospace;
 }
 
 body {
-  background-color: var(--bluegrey);
+  color: var(--green);
+  text-shadow: 1px 1px rgb(66, 66, 66);
+  background-color: rgb(31, 31, 31);
+  font-weight: bold;
+}
+
+p {
+  padding: 10px;
 }
 
 .main_content {
   max-width: 1200px;
   margin: auto;
-  border-left: 1px solid black;
-  border-right: 1px solid black;
   padding: 1em;
   z-index: 1;
+  border: 2px solid var(--bluegrey);
+  background-color: rgb(14, 14, 14);
+  box-shadow: 
+  /* in order: x offset, y offset, blur size, spread size, color */
+  inset 0 0 5px var(--white),      
+  inset 10px 0 40px var(--pink),   
+  inset -10px 0 40px var(--purple),  
+  inset 10px 0 10px var(--pink),  
+  inset -10px 0 10px var(--purple), 
+  0 0 5px var(--white),            
+  -10px 0 20px var(--pink),        
+  10px 0 20px var(--purple); 
 }
+
+.logo, .welcome-text {
+  text-align: center;
+}
+
+.welcome-text {
+  padding-bottom: 20px;
+}
+
+.login {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+
+@keyframes button-border {
+  from {border-color: var(--green);}
+  to {border-color: var(--bluegrey);}
+}
+
+#loginlink, #guestlink {
+  padding: 10px 20px;
+  margin: 20px;
+  font-family: 'Tomorrow', sans-serif;
+  background-color: var(--purple);
+  color: var(--black);
+  text-shadow: 1px 1px var(--green);
+  text-decoration: none;
+  border: 2px solid var(--green);
+  clip-path: polygon(92% 0, 100% 25%, 100% 100%, 8% 100%, 0% 75%, 0 0);
+  transform: rotate(45deg);
+  animation-name: button-border;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+#loginlink:hover, #guestlink:hover, .btn:hover {
+  transition: 400ms;
+  background-color: #aea833;
+  text-shadow: 1px 1px gray;
+}
+
+.btn {
+  padding: 10px 20px;
+  margin: 20px;
+  background-color: var(--purple);
+  color: var(--black);
+  font-family: 'Tomorrow', sans-serif;
+  font-weight: bold;
+  text-shadow: 1px 1px var(--green);
+  text-decoration: none;
+  border: 2px solid var(--green);
+  clip-path: polygon(92% 0, 100% 25%, 100% 100%, 8% 100%, 0% 75%, 0 0);
+}
+
 /* display 'flex' to reveal, not block.*/
 .lightbox {
   display: none;
@@ -36,12 +118,14 @@ body {
   z-index: 6;
   width: 400px;
   height: 300px;
-  border: 1px solid black;
+  border: 1px solid var(--green);
   border-radius: 20px;
-  background-color: white;
+  color: var(--green);
+  background-color: black;
   padding: 20px;
   position: relative;
 }
+
 .redalert {
   color: #aa0000;
   background-color: rgba(255,0,0,0.5);
@@ -53,9 +137,14 @@ body {
   right: 20px;
 }
 
-.closebutton > a {
+.closebutton > a, .modal > a {
   font-weight: bold;
   text-decoration: none;
+  color: var(--purple);
+}
+
+.closebutton > a:hover , .modal > a:hover {
+  color: #aea833;
 }
 
 .modal .victory {
@@ -63,6 +152,19 @@ body {
 }
 .modal .runcomplete {
   display:none;
+}
+
+input {
+  background-color: black;
+  border: none;
+  border-bottom: 2px solid var(--green);
+  padding: 10px;
+  color: var(--bluegrey);
+}
+
+input:focus {
+  border-color: var(--pink);
+  outline: none;
 }
 
 @media only screen and (max-width: 1200px) {
