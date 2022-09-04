@@ -4,7 +4,8 @@
   --bluegrey: #aaaacd;
   --teal: #00FFBA;
   --pink: #ff93ffc0;
-  --purple: #5157cc;
+  /* --purple: #5157cc; */
+  --purple: #4b3c83;
   --green: #58cf9de0;
   --white: #FFF;
   --black: #000;
@@ -16,39 +17,56 @@
 
 body {
   color: var(--green);
+  font-weight: bold;
   text-shadow: 1px 1px rgb(66, 66, 66);
   background-color: rgb(31, 31, 31);
-  font-weight: bold;
 }
 
 p {
   padding: 10px;
 }
 
+ul, li {
+  list-style: none;
+}
+
+@keyframes box-glow {
+  from { box-shadow: inset 0 0 5px var(--white),      
+    inset 10px 0 40px var(--pink),   
+    inset -10px 0 40px var(--purple),  
+    inset 10px 0 10px var(--pink),  
+    inset -10px 0 10px var(--purple), 
+    0 0 5px var(--white),            
+    -10px 0 20px var(--pink),        
+    10px 0 20px var(--purple); }
+  to { box-shadow: inset 0 0 5px var(--bluegrey),      
+    inset 10px 0 40px var(--purple),   
+    inset -10px 0 40px var(--pink),  
+    inset 10px 0 10px var(--purple),  
+    inset -10px 0 10px var(--pink), 
+    0 0 5px var(--bluegrey),            
+    -10px 0 20px var(--purple),        
+    10px 0 20px var(--pink); }
+}
+
 .main_content {
   max-width: 1200px;
   margin: auto;
-  padding: 1em;
+  padding: 2em;
   z-index: 1;
   border: 2px solid var(--bluegrey);
   background-color: rgb(14, 14, 14);
-  box-shadow: 
-  /* in order: x offset, y offset, blur size, spread size, color */
-  inset 0 0 5px var(--white),      
-  inset 10px 0 40px var(--pink),   
-  inset -10px 0 40px var(--purple),  
-  inset 10px 0 10px var(--pink),  
-  inset -10px 0 10px var(--purple), 
-  0 0 5px var(--white),            
-  -10px 0 20px var(--pink),        
-  10px 0 20px var(--purple); 
+  animation-name: box-glow;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
 
-.logo, .welcome-text {
+.logo, .welcome_text {
   text-align: center;
 }
 
-.welcome-text {
+.welcome_text {
   padding-bottom: 20px;
 }
 
@@ -64,40 +82,48 @@ p {
   to {border-color: var(--bluegrey);}
 }
 
-#loginlink, #guestlink {
+#loginlink, #guestlink, #logoutlink, .run_menu > li, #server_option, #reward_choice {
   padding: 10px 20px;
   margin: 20px;
   font-family: 'Tomorrow', sans-serif;
   background-color: var(--purple);
-  color: var(--black);
-  text-shadow: 1px 1px var(--green);
+  color: var(--green);
+  text-shadow: 1px 1px var(--pink);
   text-decoration: none;
   border: 2px solid var(--green);
   clip-path: polygon(92% 0, 100% 25%, 100% 100%, 8% 100%, 0% 75%, 0 0);
-  transform: rotate(45deg);
   animation-name: button-border;
   animation-duration: 4s;
   animation-iteration-count: infinite;
   animation-direction: alternate;
 }
 
-#loginlink:hover, #guestlink:hover, .btn:hover {
+#loginlink:hover, #guestlink:hover, .btn:hover, .run_menu > li, #server_option:hover, #reward_choice:hover {
   transition: 400ms;
-  background-color: #aea833;
-  text-shadow: 1px 1px gray;
+  background-color: #7ba040;
+  color: var(--bluegrey);
+  text-shadow: 1px 1px var(--purple);
+}
+
+.center {
+  justify-content: center;
 }
 
 .btn {
   padding: 10px 20px;
   margin: 20px;
   background-color: var(--purple);
-  color: var(--black);
+  color: var(--green);
   font-family: 'Tomorrow', sans-serif;
   font-weight: bold;
-  text-shadow: 1px 1px var(--green);
+  text-shadow: 1px 1px var(--pink);
   text-decoration: none;
   border: 2px solid var(--green);
   clip-path: polygon(92% 0, 100% 25%, 100% 100%, 8% 100%, 0% 75%, 0 0);
+  animation-name: button-border;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
 }
 
 /* display 'flex' to reveal, not block.*/
@@ -106,7 +132,7 @@ p {
   z-index: 5;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0,0,0,0.3);
+  background-color: rgb(14, 14, 14, 0.3);
   position: absolute;
   top: 0;
   left: 0;
@@ -121,7 +147,7 @@ p {
   border: 1px solid var(--green);
   border-radius: 20px;
   color: var(--green);
-  background-color: black;
+  background-color: rgb(14, 14, 14);
   padding: 20px;
   position: relative;
 }
@@ -154,17 +180,35 @@ p {
   display:none;
 }
 
+.input_form {
+  display: block;
+  text-align: center;
+}
+
 input {
-  background-color: black;
+  background-color: rgb(14, 14, 14);
   border: none;
   border-bottom: 2px solid var(--green);
   padding: 10px;
-  color: var(--bluegrey);
+  color: var(--white);
 }
 
 input:focus {
   border-color: var(--pink);
   outline: none;
+}
+
+.main_menu, #reward_items {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  text-decoration: none;
+  list-style: none;
+}
+
+#server_options {
+  display: flex;
+  justify-content: space-evenly;
 }
 
 @media only screen and (max-width: 1200px) {

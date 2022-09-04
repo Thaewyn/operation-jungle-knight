@@ -12,6 +12,7 @@ fetch("/api/encounter/rewards", {
     link.textContent = data.items[i].name;
     link.dataset.itemid = data.items[i].id;
     link.href = "/api/encounter/rewards/"+data.items[i].id;
+    link.setAttribute("id", "reward_choice");
     item.appendChild(link);
     item.dataset.type = data.items[i].type;
     list.appendChild(item);
