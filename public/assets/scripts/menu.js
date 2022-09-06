@@ -29,6 +29,7 @@ fetch("/api/runstatus", {
     link.textContent = "Start New Run";
     let item = document.createElement("li");
     item.appendChild(link);
+    link.classList.add("option");
     document.querySelector(".run_menu").appendChild(item);
   }
 });

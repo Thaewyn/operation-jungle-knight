@@ -62,11 +62,11 @@ ul, li {
   animation-direction: alternate;
 }
 
-.logo, .welcome_text {
+.logo, .main_text {
   text-align: center;
 }
 
-.welcome_text {
+.main_text {
   padding-bottom: 20px;
 }
 
@@ -82,7 +82,7 @@ ul, li {
   to {border-color: var(--bluegrey);}
 }
 
-#loginlink, #guestlink, #logoutlink, .run_menu > li, #server_option, #reward_choice {
+.option {
   padding: 10px 20px;
   margin: 20px;
   font-family: 'Tomorrow', sans-serif;
@@ -98,7 +98,7 @@ ul, li {
   animation-direction: alternate;
 }
 
-#loginlink:hover, #guestlink:hover, .btn:hover, .run_menu > li, #server_option:hover, #reward_choice:hover {
+.option:hover, .btn:hover {
   transition: 400ms;
   background-color: #7ba040;
   color: var(--bluegrey);
