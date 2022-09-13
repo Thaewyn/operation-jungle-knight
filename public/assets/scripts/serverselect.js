@@ -11,6 +11,8 @@ fetch("/api/server/data", {
     let item = document.createElement('li');
     let link = document.createElement('a');
     link.setAttribute('href','/api/server/'+data[server].id)
+    link.setAttribute('id', 'server_option');
+    link.classList.add('option');
     link.textContent = server + " - " + data[server].loot_type;
     link.dataset.id = data[server].id;
     item.appendChild(link);

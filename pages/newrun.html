@@ -5,13 +5,26 @@
     <link rel="stylesheet" href="/assets/styles/main.css">
   </head>
   <body>
-    <h1>New Run page</h1>
-    <p>If a user starts a new run, this is where they go. Any pre-run selections happen here, before being sent to the first "encounter select" screen.</p>
-    <p>The main one to start will be the ability to manually input a "seed" for the run, or to have one randomly generated.</p>
-    <form id="newrun_form">
-      <label for="seed"><input type="text" name="seed" id="run_seed" placeholder="Run Seed" /> - Run seed (leave blank for random)</label>
-      <button id="start_run">Start Run!</button>
-    </form>
+    <section class="main_content">
+
+      <div class="main_text">
+        <h1>New Run page</h1>
+      </div>
+      
+      <div>
+        <p>If a user starts a new run, this is where they go. Any pre-run selections happen here, before being sent to the first "encounter select" screen.</p>
+        <p>The main one to start will be the ability to manually input a "seed" for the run, or to have one randomly generated.</p>
+      </div>
+
+      <div class="input_form">
+        <form id="newrun_form">
+          <label for="seed"><input type="text" name="seed" id="run_seed" placeholder="Run Seed" /> - Run seed (leave blank for random)</label>
+          <button class="btn" id="start_run">Start Run!</button>
+        </form>
+      </div>
+
+    </section>
+
 
     <script src="/assets/scripts/main.js"></script>
     <script src="/assets/scripts/newrun.js"></script>

@@ -6,12 +6,24 @@
   </head>
   <body>
     <section class="main_content">
-      <h1>Home page</h1>
-      <p>Welcome to the game! Not much here except for a login form, or a 'play as guest' option.</p>
-      <ul>
-        <li><a href="#" id="loginlink">Login</a></li>
-        <li><a href="/run">Play as Guest</a> (progress will not be saved)</li>
-      </ul>
+      <div class="logo">
+        <img src="assets/images/jungle-knight-logo.png">
+      </div>
+
+      <div class="main_text">
+        <p>Welcome to the game!</p>
+        <p>Not much here except for a login form, or a 'play as guest' option.</p> 
+      </div>
+      <div class="background">
+        
+      </div>
+      <div>
+        <ul class="login">
+          <li><a href="#" class="option" id="loginlink">Login_</a></li>
+          <li><a href="/run" class="option" id="guestlink">Play as Guest_</a><br><br>
+            (progress will not be saved)</li>
+        </ul>
+      </div>
     </section>
 
     <section class="lightbox">
@@ -24,7 +36,7 @@
           <input type="text" name="username" placeholder="Username" />
           <input type="email" name="email" placeholder="Email address" />
           <input type="password" name="password" placeholder="Password" />
-          <button type="submit">Submit</button>
+          <button class="btn" type="submit">Submit_</button>
         </form>
         <a href="/account/create">Create new account here.</a>
       </div>

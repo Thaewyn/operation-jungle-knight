@@ -4,7 +4,7 @@ document.querySelector("#loginlink").addEventListener("click", (e) => {
   e.preventDefault()
 
   console.log("clicked login link");
-  displayModal("please log in?")
+  displayModal("Please log in:");
 });
 
 document.querySelector("#loginform").addEventListener("submit", (e) => {
