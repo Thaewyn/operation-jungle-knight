@@ -103,7 +103,9 @@ ul, li {
   to {opacity:0;}
 }
 
-.option::after, #loginform > button[type='submit']::after {
+.option::after, 
+#loginform > button[type='submit']::after,
+#createform > button[type='submit']::after {
   content: "_";
   animation-name: cursor_blink;
   animation-duration: 1s;
