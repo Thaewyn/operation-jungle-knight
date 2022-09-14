@@ -186,7 +186,7 @@ module.exports = function(app) {
     } else {
       res.json({msg:"Invalid turn submission", success:false})
     }
-    // FIXME: DEBUG LOGIC 
+    // FIXME: DEBUG LOGIC - forces game end after 2 encounters.
     if(req.session.encounters) {
       req.session.encounters += 1
       if(req.session.encounters > 1) {
@@ -197,6 +197,9 @@ module.exports = function(app) {
     }
     //apply result data to session data next.
 
+    req.session.player.current_hp = result.next_turn.player.hp;
+    req.session.player.statuses = result.next_turn.player.statuses;
+    // req.session.encounter
     
     console.log("encounters:"+req.session.encounters);
     // end DEBUG LOGIC

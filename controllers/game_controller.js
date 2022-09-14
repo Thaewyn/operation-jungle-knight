@@ -207,7 +207,7 @@ class GameController {
       }
       console.log("new hp: "+newresult.next_turn.player.hp+", max hp:" +session.player.max_hp)
       if(newresult.next_turn.player.hp > session.player.max_hp) {
-        newresult.next_turn.player.hp == session.player.max_hp;
+        newresult.next_turn.player.hp = session.player.max_hp;
       }
       // as we iterate, also apply animation 'actions' and log entries
       // once all iterations are complete, apply final hp values, and return newresult
