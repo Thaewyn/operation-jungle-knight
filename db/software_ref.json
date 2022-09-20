@@ -21,7 +21,7 @@
     "targets": "FIRST2",
     "power": 20,
     "effect": "DAMAGE",
-    "status": [2],
+    "status": ["burn"],
     "rarity": "C",
     "cost": 10
   },
@@ -60,7 +60,7 @@
     "targets": "SELF",
     "power": 0,
     "effect": "HEAL",
-    "status": [2,3],
+    "status": ["burn","poison"],
     "rarity": "C",
     "cost": 10
   },

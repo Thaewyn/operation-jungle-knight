@@ -96,5 +96,12 @@ function handleTurnResults(api_data) {
     }
   } else if (api_data.data.defeat) {
     //what do we do when the player loses?
+  } else {
+    console.log(api_data.data.actions);
+    let list = document.querySelectorAll("#player_attacks input:checked");
+    for (let i = 0; i < list.length; i++) {
+      const element = list[i];
+      element.checked = false;
+    }
   }
 }
