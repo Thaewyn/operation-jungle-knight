@@ -3,6 +3,7 @@ const GameController = require('../../controllers/game_controller.js');
 describe("GameController", () => {
   let gc
   beforeEach(() => {
+    //FIXME - update gamecontroller dbc with mock to prevent mysql errors
     gc = new GameController();
   })
   it("should construct a new GameController instance when initialized", () => {
@@ -121,14 +122,81 @@ describe("GameController", () => {
   });
 
   describe("handlePlayerHeals", () => {
+    let tempResult, tempSession, skill_data;
+    beforeEach(() => {
+      tempResult = {
+        actions: [],
+        next_turn: {
+          player: {
+            hp: 5,
+            defense: 0,
+            statuses: {
+              burn: 2
+            },
+            skills: []
+          }
+        }
+      }
+      tempSession = {
+        player: {
+          max_hp: 20
+        }
+      }
+      skill_data = [
+        {
+          "id": 4,
+          "name": "Heal",
+          "icon_url": "",
+          "desc": "Restore a small amount of health",
+          "cooldown": 4,
+          "targets": "SELF",
+          "power": 5,
+          "effect": "HEAL",
+          "status": [],
+          "rarity": "C",
+          "cost": 10
+        }
+      ]
+    })
     it("if the player submitted a 'heal' skill, it should restore the player's HP by that skill's amount", () => {
-
+      let result = gc.handlePlayerHeals(tempResult, tempSession, skill_data);
+      expect(result.next_turn.player.hp).toEqual(10);
     })
     it("if the player is already at full HP, it should activate the skill, but not change the player's HP", () => {
-
+      tempResult.next_turn.player.hp = 20;
+      let result = gc.handlePlayerHeals(tempResult, tempSession, skill_data);
+      expect(result.next_turn.player.hp).toEqual(20);
     })
     it("if the player did not submit any 'heal' skills, it should *not* change the result object at all", () => {
-      
+      skill_data = []
+      let result = gc.handlePlayerHeals(tempResult, tempSession, skill_data);
+      expect(result).toEqual(tempResult);
+    })
+    it("if the player heals more than their max hp, it should cap their hp at the maximum.", () => {
+      tempResult.next_turn.player.hp = 18;
+      let result = gc.handlePlayerHeals(tempResult, tempSession, skill_data);
+      expect(result.next_turn.player.hp).toEqual(20);
+    })
+    it("should not change any skill timers if no cleanse skill is used", () => {
+      let result = gc.handlePlayerHeals(tempResult, tempSession, skill_data);
+      expect(result.next_turn.player.statuses).toHaveProperty('burn',2)
+    })
+    it("should set status effect timers to 0 when a status cleanse skill is used", () => {
+      skill_data = [{
+        "id": 5,
+        "name": "Cleanse",
+        "icon_url": "",
+        "desc": "Remove burn and poison status effects.",
+        "cooldown": 2,
+        "targets": "SELF",
+        "power": 0,
+        "effect": "HEAL",
+        "status": ["burn","poison"],
+        "rarity": "C",
+        "cost": 10
+      }]
+      let result = gc.handlePlayerHeals(tempResult, tempSession, skill_data);
+      expect(result.next_turn.player.statuses).toHaveProperty('burn',0)
     })
   })
 
