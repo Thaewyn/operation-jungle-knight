@@ -200,6 +200,21 @@ describe("GameController", () => {
     })
   })
 
+  describe("handlePlayerDefense", () => {
+    it("should not change the result object if no Defense-type skills are activated", () => {
+
+    })
+    it("should increase player defense if the player submitted any defense-increasing skills, up to a maximum of level 5", () => {
+
+    })
+    it("should improve Connection quality if the player submitted any connection-affecting skills, up to a maximum of 2 and a minimum of 0", () => {
+
+    })
+    it("should increase Obfuscation if the player submitted any skills that affect it.", () => {
+      
+    })
+  })
+
   describe("generateSoftwareRewards", () => {
     it("should (in testing) return an array with [1,4,6]", () => {
       expect(gc.generateSoftwareRewards()).toEqual([1,4,6]);

@@ -78,7 +78,7 @@ class DBController {
       let new_enemy = {
         ...enemy_template,
         current_health: enemy_template.max_health,
-        current_defence: enemy_template.defence,
+        current_defense: enemy_template.defense,
         status_list: [],
         next_attack_intent: enemy_template.attack_ids[0]
       }
