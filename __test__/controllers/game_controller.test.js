@@ -201,17 +201,136 @@ describe("GameController", () => {
   })
 
   describe("handlePlayerDefense", () => {
+    let tempResult, tempSession, skill_data;
+    beforeEach(() => {
+      tempResult = {
+        actions: [],
+        next_turn: {
+          player: {
+            hp: 5,
+            defense: 0,
+            connection: 1.0,
+            obfuscation: 0,
+            skills: []
+          }
+        }
+      }
+      tempSession = {}
+      skill_data = []
+    })
     it("should not change the result object if no Defense-type skills are activated", () => {
-
+      skill_data = [{
+        "id": 4,
+        "name": "Heal",
+        "icon_url": "",
+        "desc": "Restore a small amount of health",
+        "cooldown": 4,
+        "targets": "SELF",
+        "power": 5,
+        "effect": "HEAL",
+        "status": [],
+        "rarity": "C",
+        "cost": 10
+      }];
+      let result = gc.handlePlayerDefense(tempResult, tempSession, skill_data);
+      expect(result).toEqual(tempResult);
     })
     it("should increase player defense if the player submitted any defense-increasing skills, up to a maximum of level 5", () => {
-
+      skill_data = [
+        {
+          "id": 6,
+          "name": "Firewall",
+          "icon_url": "",
+          "desc": "Increase player defense.",
+          "cooldown": 3,
+          "targets": "SELF",
+          "power": 1,
+          "effect": "DEFEND",
+          "status": [],
+          "rarity": "C",
+          "cost": 10
+        }
+      ]
+      let result = gc.handlePlayerDefense(tempResult, tempSession, skill_data);
+      expect(result.next_turn.player.defense).toEqual(1);
     })
-    it("should improve Connection quality if the player submitted any connection-affecting skills, up to a maximum of 2 and a minimum of 0", () => {
-
+    it("should improve Connection quality if the player submitted any connection-affecting skills", () => {
+      skill_data = [
+        {
+          "id": 7,
+          "name": "Hardwire",
+          "icon_url": "",
+          "desc": "Increase Connection Quality.",
+          "cooldown": 3,
+          "targets": "SELF",
+          "power": 0.2,
+          "effect": "CONNECT",
+          "status": [],
+          "rarity": "C",
+          "cost": 10
+        }
+      ]
+      let result = gc.handlePlayerDefense(tempResult, tempSession, skill_data);
+      expect(result.next_turn.player.connection).toEqual(1.2);
+    })
+    it("should improve Connection up to a maximum of 2 ", () => {
+      tempResult.next_turn.player.connection = 1.9;
+      skill_data = [
+        {
+          "id": 7,
+          "name": "Hardwire",
+          "icon_url": "",
+          "desc": "Increase Connection Quality.",
+          "cooldown": 3,
+          "targets": "SELF",
+          "power": 0.2,
+          "effect": "CONNECT",
+          "status": [],
+          "rarity": "C",
+          "cost": 10
+        }
+      ]
+      let result = gc.handlePlayerDefense(tempResult, tempSession, skill_data);
+      expect(result.next_turn.player.connection).toEqual(2);
+    })
+    it("should change Connection to a minimum of 0, if subtracting", () => {
+      tempResult.next_turn.player.connection = 0.1;
+      skill_data = [
+        {
+          "id": 7,
+          "name": "Hardwire",
+          "icon_url": "",
+          "desc": "Increase Connection Quality.",
+          "cooldown": 3,
+          "targets": "SELF",
+          "power": -0.2,
+          "effect": "CONNECT",
+          "status": [],
+          "rarity": "C",
+          "cost": 10
+        }
+      ]
+      let result = gc.handlePlayerDefense(tempResult, tempSession, skill_data);
+      expect(result.next_turn.player.connection).toEqual(0);
     })
     it("should increase Obfuscation if the player submitted any skills that affect it.", () => {
-      
+      skill_data = [
+        {
+          "id": 8,
+          "name": "Scrambler",
+          "icon_url": "",
+          "desc": "Increase Obfuscation level.",
+          "cooldown": 5,
+          "targets": "SELF",
+          "power": 2,
+          "effect": "OBFUSCATE",
+          "status": [],
+          "rarity": "C",
+          "cost": 10
+        }
+      ]
+      let result = gc.handlePlayerDefense(tempResult, tempSession, skill_data);
+      expect(result.next_turn.player.obfuscation).toEqual(2);
     })
   })
 

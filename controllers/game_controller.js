@@ -53,7 +53,9 @@ class GameController {
             hp: session.player.current_hp,
             defense: session.player.current_defense,
             statuses: session.player.statuses, //both positive and negative.
-            skills: session.player.software_list //skill cooldown state.
+            skills: session.player.software_list, //skill cooldown state.
+            connection: session.player.connection,
+            obfuscation: session.player.obfuscation
           },
           enemies: [
             {
@@ -95,7 +97,6 @@ class GameController {
         const id = turn_data.attacks[i];
         let skill = dbc.getSoftwareDetailsById(id);
         full_skill_data.push(skill);
-        //TODO - update all skills on cooldown to be cooldown-1
       }
 
       result = this.handlePlayerHeals(result, session, full_skill_data);
@@ -134,7 +135,7 @@ class GameController {
   }
 
   validateTurnSubmission(session, player_submission){
-    console.log("gc.validateTurnSubmission");
+    //console.log("gc.validateTurnSubmission");
     // TODO: make sure the player is not submitting more actions than they can do
     let max_attacks_per_turn = 3; //FIXME: arbitrary number, pull from session data?
     if (player_submission.attacks.length > max_attacks_per_turn) {
@@ -165,7 +166,7 @@ class GameController {
     //return false;
   }
   handlePlayerHeals(resultobj, session, skill_data){
-    console.log("gc.handlePlayerHeals");
+    //console.log("gc.handlePlayerHeals");
     // make a copy of the result object
     let newresult = resultobj;
     // go through the player submission and see if there are any heal skills
@@ -176,7 +177,7 @@ class GameController {
         heal_skill_list.push(skill);
       }
     }
-    console.log(heal_skill_list);
+    //console.log(heal_skill_list);
     //if there are none, return newresult, otherwise unchanged
     if(heal_skill_list.length == 0) {
       return newresult;
@@ -225,8 +226,8 @@ class GameController {
    * @param {*} submission 
    * @returns 
    */
-  handlePlayerDefense(resultobj, session, submission){
-    console.log("gc.handlePlayerDefense");
+  handlePlayerDefense(resultobj, session, skill_data){
+    //console.log("gc.handlePlayerDefense");
     let newresult = resultobj;
     let defense_skill_list = [];
     for (let i = 0; i < skill_data.length; i++) {
@@ -235,7 +236,7 @@ class GameController {
         defense_skill_list.push(skill);
       }
     }
-    console.log(defense_skill_list);
+    //console.log(defense_skill_list);
     //if there are none, return newresult, otherwise unchanged
     if(defense_skill_list.length == 0) {
       return newresult;
@@ -245,28 +246,33 @@ class GameController {
         //individual handlers.
         if(skill.effect == "DEFEND") {
           //handle defense, 0-5
-          newresult.next_turn.player.defense += skill.power
-          if(newresult.next_turn.player.defense >= 5) {
+          newresult.next_turn.player.defense += skill.power;
+          if(newresult.next_turn.player.defense > 5) {
             newresult.next_turn.player.defense = 5;
           }
-
         } else if(skill.effect == "CONNECT") {
           //handle connection, 0-2, float
+          newresult.next_turn.player.connection += skill.power;
+          if(newresult.next_turn.player.connection < 0) {
+            newresult.next_turn.player.connection = 0
+          } else if (newresult.next_turn.player.connection > 2) {
+            newresult.next_turn.player.connection = 2
+          }
         } else if(skill.effect == "OBFUSCATE") {
           //handle obfuscation, -inf - inf, integer
+          newresult.next_turn.player.obfuscation += skill.power;
         }
-        //FIXME - handle cooldown properly
       }
     }
     return resultobj;
   }
-  handlePlayerAttacks(resultobj, session, submission){
+  handlePlayerAttacks(resultobj, session, skill_data){
     return resultobj;
   }
-  handleStatusEffects(resultobj, session, submission){
+  handleStatusEffects(resultobj, session, skill_data){
     return resultobj;
   }
-  handleEnemyAttacks(resultobj, session, submission){
+  handleEnemyAttacks(resultobj, session, skill_data){
     return resultobj;
   }
 
@@ -310,10 +316,13 @@ class GameController {
         id: 1,
         cooldown:0
       },{
-        id: 4,
+        id: 6,
         cooldown:0
       },{
-        id: 5,
+        id: 7,
+        cooldown:0
+      },{
+        id: 8,
         cooldown:0
       }],
       hardware_list:[{
