@@ -105,7 +105,7 @@ class GameController {
       result = this.handleStatusEffects(result, session, full_skill_data);
       result = this.handleEnemyAttacks(result, session, full_skill_data);
   
-      
+      result = this.handleCooldowns(result, session, full_skill_data);
       /**
        * Ability target keywords:
        * ALL
@@ -274,6 +274,23 @@ class GameController {
   }
   handleEnemyAttacks(resultobj, session, skill_data){
     return resultobj;
+  }
+  handleCooldowns(resultobj, session, skill_data) {
+    let newresult = resultobj;
+
+    for (let j=0;j<newresult.next_turn.player.skills.length; j++) {
+      let skill = newresult.next_turn.player.skills[j];
+      skill_data.forEach( used_skill => {
+        if( used_skill.id == skill.id ){
+          newresult.next_turn.player.skills[j].cooldown = used_skill.cooldown;
+        }
+      })
+      if(skill.cooldown > 0){
+        newresult.next_turn.player.skills[j].cooldown -= 1;
+      }
+    }
+
+    return newresult;
   }
 
   /**
