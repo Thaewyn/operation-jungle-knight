@@ -98,6 +98,21 @@ ul, li {
   animation-direction: alternate;
 }
 
+@keyframes cursor_blink {
+  from {opacity:1;}
+  to {opacity:0;}
+}
+
+.option::after, 
+#loginform > button[type='submit']::after,
+#createform > button[type='submit']::after {
+  content: "_";
+  animation-name: cursor_blink;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
 .option:hover, .btn:hover {
   transition: 400ms;
   background-color: #7ba040;
