@@ -200,8 +200,6 @@ class GameController {
           }
         }
 
-        //have skill update cooldown and add effect to log
-        newresult.next_turn.player.skills.filter
         let action = {
           type: 'player_heal',
           log_entry: skill.desc
