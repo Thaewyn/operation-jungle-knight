@@ -1,5 +1,6 @@
 const db = require('../db');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const encounter_ref = require("../db/encounter_ref.json");
 const enemy_ref = require("../db/enemy_ref.json");
 const software_ref = require("../db/software_ref.json");
@@ -19,6 +20,24 @@ class DBController {
   startNewRun(userid, seed) {
     //NEEDS ERROR CHECKING eventually. Don't just trust the user id.
     console.log("DBController.startNewRun");
+
+    // check if user provided seed
+    if (!seed) {
+      console.log("NO SEED PROVIDED BY USER");
+      seed = crypto.randomBytes(32).toString('hex');
+    } else {
+      console.log("SEED PROVIDED BY USER");
+    }
+    console.log("SEED = " + seed);
+
+    // generate hash string from seed string
+    const hash = crypto.createHash('sha256').update(seed).digest('hex');
+    console.log("HASH = " + hash);
+
+    // get pseudorandom values from hash string using fixedOffset and maximum
+    const resultRandom = this.getPseudoRandom(hash, 5, 20);
+    console.log("RESULTRANDOM = " + resultRandom);
+
     return new Promise((resolve, reject) => {
       let querystring = 'INSERT INTO run (userid_fk, seed, run_start) VALUES (?, ?, ?)'
       let q = db.query(querystring, [userid, seed, new Date()], (err, result) => {
@@ -30,13 +49,46 @@ class DBController {
         resolve(result);
       });
       //console.log(q.sql);
-    })
+    });
+  }
+
+  // /**
+  //  *
+  //  * @param {*} seed
+  //  * @returns
+  //  */
+  // generateHash(seed) {
+  //   // generate hash string from seed string
+  //   const hash = crypto.createHash('sha256').update(seed).digest('hex');
+  //   console.log("HASH = " + hash);
+  //   return hash;
+  // }
+
+  /**
+   *
+   * @param {*} hash
+   * @param {*} fixedOffset
+   * @param {*} maximum
+   * @returns
+   */
+  getPseudoRandom(hash, fixedOffset, maximum) {
+    // create array of pseudorandom values from hashString
+    const randomValues = hash.split('');
+    console.log("RANDOMVALUES = " + randomValues);
+
+
+    // return random value using fixedOffset
+    // const result = parseInt(randomValues[fixedOffset], 16);
+    const result = randomValues[fixedOffset];
+    console.log("RESULT = " + randomValues);
+    return result;
+    // TODO: check if value is below 'maximum '
   }
 
   /**
    * During a run, get 3 options for the next 'server' to approach
-   * @param {int} userid 
-   * @param {int} runid 
+   * @param {int} userid
+   * @param {int} runid
    * @returns 3 server options
    */
   getServerSelection(userid, runid) {
@@ -62,10 +114,10 @@ class DBController {
   }
 
   /**
-   * 
+   *
    * @param {string} which_act expects "act_one" or "act_two", etc
    * @param {int} encounter_id the numerical id of the encounter in that act
-   * 
+   *
    * @returns an array containing instances of each enemy in the encounter
    */
   populateEncounterData(which_act, encounter_id) {
@@ -119,7 +171,7 @@ class DBController {
             if (err) {
               reject(err);
             }
-    
+
             resolve(result);
           });
         })
@@ -141,7 +193,7 @@ class DBController {
 
   /**
    * Grab all software item information from json reference file.
-   * @param {Number} id 
+   * @param {Number} id
    */
   getSoftwareDetailsById(id) {
     if(software_ref[id]) {
@@ -163,6 +215,15 @@ class DBController {
       return "ERR: No hardware with that ID";
     }
   }
+
+  // /**
+  //  *
+  //  * @param {*} hex
+  //  * @returns
+  //  */
+  //  hexToDecimal(hex) {
+  //   return parseInt(hex, 16);
+  // }
 }
 
 module.exports = DBController;
