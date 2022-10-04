@@ -83,6 +83,7 @@ module.exports = function(app) {
       console.log(result.insertId);
       //crypt.createHash('sha256')
       req.session.runid = result.insertId;
+      //req.session.seedHash = 
 
       req.session.player = gc.generateDefaultPlayer();
 

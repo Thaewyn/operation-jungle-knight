@@ -40,7 +40,7 @@ class DBController {
 
     return new Promise((resolve, reject) => {
       let querystring = 'INSERT INTO run (userid_fk, seed, run_start) VALUES (?, ?, ?)'
-      let q = db.query(querystring, [userid, seed, new Date()], (err, result) => {
+      let q = db.query(querystring, [userid, hash, new Date()], (err, result) => {
         if (err) {
           console.log("SQL Error in DBController.startNewRun");
           reject(err);
@@ -75,14 +75,19 @@ class DBController {
     // create array of pseudorandom values from hashString
     const randomValues = hash.split('');
     console.log("RANDOMVALUES = " + randomValues);
-
-
     // return random value using fixedOffset
     // const result = parseInt(randomValues[fixedOffset], 16);
     const result = randomValues[fixedOffset];
     console.log("RESULT = " + randomValues);
-    return result;
+
+    const subset = hash.substring(fixedOffset,fixedOffset+3);
+    console.log("SUBSET = "+subset);
+    const parsed = parseInt(subset,16);
+    console.log("INTVAL = " + parsed);
     // TODO: check if value is below 'maximum '
+    const capped = parsed % maximum;
+    console.log("CAPPED = "+capped)
+    return result;
   }
 
   /**
