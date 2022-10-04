@@ -199,7 +199,11 @@ module.exports = function(app) {
 
     req.session.player.current_hp = result.next_turn.player.hp;
     req.session.player.statuses = result.next_turn.player.statuses;
+    req.session.player.defense = result.next_turn.player.defense;
+    req.session.player.connection = result.next_turn.player.connection;
+    req.session.player.obfuscation = result.next_turn.player.obfuscation;
     // req.session.encounter
+    //TODO - handle cooldowns.
     
     console.log("encounters:"+req.session.encounters);
     // end DEBUG LOGIC
