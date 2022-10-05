@@ -52,18 +52,6 @@ class DBController {
     });
   }
 
-  // /**
-  //  *
-  //  * @param {*} seed
-  //  * @returns
-  //  */
-  // generateHash(seed) {
-  //   // generate hash string from seed string
-  //   const hash = crypto.createHash('sha256').update(seed).digest('hex');
-  //   console.log("HASH = " + hash);
-  //   return hash;
-  // }
-
   /**
    *
    * @param {*} hash
@@ -129,13 +117,12 @@ class DBController {
     let enemies = [];
 
     let encounter = encounter_ref[which_act][encounter_id]
-    for(let i=0; i<encounter.enemy_ids.length; i++) {
-      let enemy_id = encounter.enemy_ids[i];
+    for(const enemy_id of encounter.enemy_ids) {
       let enemy_template = enemy_ref[enemy_id]
       let new_enemy = {
         ...enemy_template,
         current_health: enemy_template.max_health,
-        current_defence: enemy_template.defence,
+        current_defense: enemy_template.defense,
         status_list: [],
         next_attack_intent: enemy_template.attack_ids[0]
       }
@@ -220,15 +207,6 @@ class DBController {
       return "ERR: No hardware with that ID";
     }
   }
-
-  // /**
-  //  *
-  //  * @param {*} hex
-  //  * @returns
-  //  */
-  //  hexToDecimal(hex) {
-  //   return parseInt(hex, 16);
-  // }
 }
 
 module.exports = DBController;
