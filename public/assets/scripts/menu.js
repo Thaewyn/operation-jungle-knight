@@ -10,6 +10,7 @@ fetch("/api/runstatus", {
     let link = document.createElement("a");
     link.href = "/run";
     link.textContent = "Continue Run";
+    link.classList.add("option");
     let item = document.createElement("li");
     item.appendChild(link);
     document.querySelector(".run_menu").appendChild(item);
