@@ -194,7 +194,7 @@ class GameController {
           //remove statuses if any.
           for (let k = 0; k < skill.status.length; k++) {
             const status = skill.status[k];
-            console.log("remove status: "+status);
+            //console.log("remove status: "+status);
             // remove status from next turn player status list
             newresult.next_turn.player.statuses[status] = 0
           }
@@ -206,7 +206,7 @@ class GameController {
         }
         newresult.actions.push(action);
       }
-      console.log("new hp: "+newresult.next_turn.player.hp+", max hp:" +session.player.max_hp)
+      //console.log("new hp: "+newresult.next_turn.player.hp+", max hp:" +session.player.max_hp)
       if(newresult.next_turn.player.hp > session.player.max_hp) {
         newresult.next_turn.player.hp = session.player.max_hp;
       }
