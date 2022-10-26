@@ -176,6 +176,21 @@ module.exports = function(app) {
     }
   });
 
+  /**
+   * For the encounter page (to start), get basic player info.
+   * hp, statuses, etc.
+   */
+  app.get("/api/player/stats", (req,res) => {
+    if(req.session?.player) {
+      res.json(req.session.player);
+    } else {
+      res.json({
+        success:false,
+        msg: "Game Error: No player object to get data for"
+      });
+    }
+  });
+
   app.post("/api/encounter/turn", function(req,res) {
     //player submits their turn end data. Handle as appropriate.
     // TODO: brief data corruption validation. Logic validation happens elsewhere.
