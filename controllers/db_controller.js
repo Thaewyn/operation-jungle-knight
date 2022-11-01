@@ -49,7 +49,9 @@ class DBController {
   }
 
   /**
-   *
+   * Given the seed hash string for a given run, and a set 'fixed offset' for the function
+   * (not random, the offset for something like 'select a reward' will always be the same number or generated in the same way)
+   * and the maximum number of possible options to choose from, getPseudoRandom will return a number from 0-(maximum-1)
    * @param {*} hash
    * @param {*} fixedOffset
    * @param {*} maximum
@@ -85,10 +87,16 @@ class DBController {
         //get run seed, act number, etc
         // process run seed from appropriate data
         //grab data from encounter_ref.json
+        // adjust fixedoffset to take in more inputs (number of encounters, etc)
+        // fixedOffsetChange = result[0].act_num*2 - result[0]encounter_num + 7
+        let encounterNum1 = this.getPseudoRandom(result[0].seed, 4, 10);
+        let encounterNum2 = this.getPseudoRandom(result[0].seed, 7, 10);
+        let encounterNum3 = this.getPseudoRandom(result[0].seed, 18, 10);
+        // console.log("encounternum1 sample: "+encounterNum1);
         let encounters = {
-          server1: encounter_ref.act_one[1],
-          server2: encounter_ref.act_one[2],
-          server3: encounter_ref.act_one[3]
+          server1: encounter_ref.act_one[encounterNum1],
+          server2: encounter_ref.act_one[encounterNum2],
+          server3: encounter_ref.act_one[encounterNum3]
         };
         resolve(encounters);
       });
