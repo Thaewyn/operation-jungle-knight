@@ -23,20 +23,16 @@ class DBController {
 
     // check if user provided seed
     if (!seed) {
-      console.log("NO SEED PROVIDED BY USER");
+      // console.log("NO SEED PROVIDED BY USER");
       seed = crypto.randomBytes(32).toString('hex');
     } else {
-      console.log("SEED PROVIDED BY USER");
+      // console.log("SEED PROVIDED BY USER");
     }
     console.log("SEED = " + seed);
 
     // generate hash string from seed string
     const hash = crypto.createHash('sha256').update(seed).digest('hex');
     console.log("HASH = " + hash);
-
-    // get pseudorandom values from hash string using fixedOffset and maximum
-    const resultRandom = this.getPseudoRandom(hash, 5, 20);
-    console.log("RESULTRANDOM = " + resultRandom);
 
     return new Promise((resolve, reject) => {
       let querystring = 'INSERT INTO run (userid_fk, seed, run_start) VALUES (?, ?, ?)'
@@ -61,21 +57,14 @@ class DBController {
    */
   getPseudoRandom(hash, fixedOffset, maximum) {
     // create array of pseudorandom values from hashString
-    const randomValues = hash.split('');
-    console.log("RANDOMVALUES = " + randomValues);
+    // const randomValues = hash.split('');
     // return random value using fixedOffset
-    // const result = parseInt(randomValues[fixedOffset], 16);
-    const result = randomValues[fixedOffset];
-    console.log("RESULT = " + randomValues);
-
-    const subset = hash.substring(fixedOffset,fixedOffset+3);
-    console.log("SUBSET = "+subset);
-    const parsed = parseInt(subset,16);
-    console.log("INTVAL = " + parsed);
-    // TODO: check if value is below 'maximum '
+    // const result = randomValues[fixedOffset];
+    const subset = hash.substring(fixedOffset, fixedOffset + 3);
+    const parsed = parseInt(subset, 16);
+    // check if value is below 'maximum'
     const capped = parsed % maximum;
-    console.log("CAPPED = "+capped)
-    return result;
+    return capped;
   }
 
   /**
