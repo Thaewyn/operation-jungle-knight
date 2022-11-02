@@ -57,15 +57,7 @@ class GameController {
             connection: session.player.connection,
             obfuscation: session.player.obfuscation
           },
-          enemies: [
-            {
-              id: 1,
-              hp: 10,
-              defense: 5,
-              statuses: [],
-              intent: "attack"
-            }
-          ]
+          enemies: session.encounter.enemies
         }
       }
       /*
@@ -261,11 +253,56 @@ class GameController {
           newresult.next_turn.player.obfuscation += skill.power;
         }
       }
+      return newresult;
     }
-    return resultobj;
   }
   handlePlayerAttacks(resultobj, session, skill_data){
-    return resultobj;
+    // check skill data for attacks
+    let newresult = resultobj;
+    let attack_skill_list = [];
+    for (let i = 0; i < skill_data.length; i++) {
+      const skill = skill_data[i];
+      if (skill.effect == "DAMAGE") {
+        attack_skill_list.push(skill);
+      }
+    }
+    if(attack_skill_list.length == 0) {
+      return newresult;
+    } else {
+      for(let i=0; i<attack_skill_list.length; i++) {
+        const skill = attack_skill_list[i];
+        //individual handlers.
+        // depending on skill targets, apply effects to enemies.
+        // possible target values: FIRST1, FIRST2, ALL
+
+        //calculate outgoing damage
+        let damage = skill.power * newresult.next_turn.player.connection;
+        // console.log("skill "+i+", raw damage: "+damage);
+
+        let deadEnemies = 0;
+        for (let i = 0; i < newresult.next_turn.enemies.length; i++) {
+          const target = newresult.next_turn.enemies[i];
+
+          if(target.current_health <= 0) {
+            deadEnemies += 1
+          } else {
+            if(skill.targets == "ALL") {
+              target.current_health -= damage;
+            } else if (deadEnemies - i == 0 && (skill.targets == "FIRST1" || skill.targets == "FIRST2")) {
+              target.current_health -= damage;
+            } else if (deadEnemies - i == 1 && skill.targets == "FIRST2") {
+              target.current_health -= damage;
+            }
+          }
+        }
+        //if everything is dead:
+        console.log("deadenemies = "+deadEnemies+", enemy list size: "+newresult.next_turn.enemies.length);
+        if(deadEnemies == newresult.next_turn.enemies.length) {
+          newresult.victory = true
+        }
+      }
+      return newresult;
+    }
   }
   handleStatusEffects(resultobj, session, skill_data){
     return resultobj;
