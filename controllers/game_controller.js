@@ -333,7 +333,50 @@ class GameController {
     }
   }
   handleStatusEffects(resultobj, session, skill_data){
-    return resultobj;
+    /*
+    Status effects:
+    5: beneficial effects on the player
+    6: beneficial effects on enemies
+    7: detrimental effects on enemies
+    8: detrimental effects on players
+
+    ---
+    Potential status effects
+    - burn - deals (%hp) damage every turn. 
+    - poison - deals damage every turn per stack, loses one stack per turn.
+    - freeze - if affected by freeze, all used skills get +1 cooldown (per stack)
+    - glitch - like blind. some numbers on the front end are scrambled / invisible. on until it is removed
+    - override - % chance of skill activation becoming a different (valid, off cooldown) skill. one stack affects one skill use, all stacks clear at end of turn
+    - supercharged - all attack skills get +1 damage per stack, decays 1 stack per turn
+    - regenerate - opposite of poison. Heals 1 damage per turn per stack, decays one stack per turn
+    - temporary shield - immune to 1 hit, lasts until used.
+    - mist form - 50% miss chance on incoming hit, decays 1 stack per turn
+
+    - trace handling
+    */
+    let newresult = resultobj;
+    // iterate through player, all enemies, deal with statuses.
+    let playerStatuses = Object.keys(newresult.next_turn.player.statuses)
+    
+    for (let i = 0; i < playerStatuses.length; i++) {
+      const status = playerStatuses[i]; //'burn'
+      const stacks = newresult.next_turn.player.statuses[playerStatuses[i]]; //2
+      switch (status) {
+        case "burn":
+          //burn handling
+          let damage = Math.floor(session.player.max_hp * 0.05);
+          next_turn.player.hp -= damage;
+          newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
+          break;
+      
+        default:
+          break;
+      }
+    }
+    
+
+
+    return newresult;
   }
   handleEnemyAttacks(resultobj, session, skill_data){
     return resultobj;
