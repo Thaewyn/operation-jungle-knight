@@ -102,5 +102,18 @@
     "status": [],
     "rarity": "C",
     "cost": 10
+  },
+  "9": {
+    "id": 9,
+    "name": "Backstab",
+    "icon_url": "",
+    "desc": "Hits the enemy in the back",
+    "cooldown": 0,
+    "targets": "LAST1",
+    "power": 3,
+    "effect": "DAMAGE",
+    "status": [],
+    "rarity": "C",
+    "cost": 10
   }
 }
