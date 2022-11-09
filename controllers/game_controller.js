@@ -57,15 +57,7 @@ class GameController {
             connection: session.player.connection,
             obfuscation: session.player.obfuscation
           },
-          enemies: [
-            {
-              id: 1,
-              hp: 10,
-              defense: 5,
-              statuses: [],
-              intent: "attack"
-            }
-          ]
+          enemies: session.encounter.enemies
         }
       }
       /*
@@ -261,11 +253,84 @@ class GameController {
           newresult.next_turn.player.obfuscation += skill.power;
         }
       }
+      return newresult;
     }
-    return resultobj;
   }
   handlePlayerAttacks(resultobj, session, skill_data){
-    return resultobj;
+    // check skill data for attacks
+    let newresult = resultobj;
+    let attack_skill_list = [];
+    for (let i = 0; i < skill_data.length; i++) {
+      const skill = skill_data[i];
+      if (skill.effect == "DAMAGE") {
+        attack_skill_list.push(skill);
+      }
+    }
+    if(attack_skill_list.length == 0) {
+      return newresult;
+    } else {
+      for(let i=0; i<attack_skill_list.length; i++) {
+        const skill = attack_skill_list[i];
+
+        //calculate outgoing damage
+        let damage = skill.power * newresult.next_turn.player.connection;
+
+        let deadEnemies = 0;
+
+        let validTargets = 0;
+        let dir = null;
+        if (skill.targets == "FIRST1") {
+          validTargets = 1;
+          dir = "forward";
+        } else if (skill.targets == "FIRST2") {
+          validTargets = 2;
+          dir = "forward";
+        } else if (skill.targets == "ALL") {
+          validTargets = 50;
+          dir = "forward";
+        } else if (skill.targets == "LAST1") {
+          validTargets = 1;
+          dir = "backward";
+        }
+
+        if (dir == "forward") {
+          for (let i = 0; i < newresult.next_turn.enemies.length; i++) {
+            const target = newresult.next_turn.enemies[i];
+            if(target.current_health <= 0) {
+              deadEnemies += 1;
+            } else if (validTargets > 0) {
+              target.current_health -= damage;
+              validTargets--;
+              if(target.current_health <= 0) {
+                deadEnemies += 1;
+              }
+            } else {
+              break; //this only works if we're going front to back in detection
+            }
+          }
+        } else if (dir == "backward") {
+          for (let i = newresult.next_turn.enemies.length-1; i >= 0; i--) {
+            const target = newresult.next_turn.enemies[i];
+            if(target.current_health <= 0) {
+              deadEnemies += 1;
+            } else if (validTargets > 0) {
+              target.current_health -= damage;
+              validTargets--;
+              if(target.current_health <= 0) {
+                deadEnemies += 1;
+              }
+            } else {
+              break;
+            }
+          }
+        }
+
+        if(deadEnemies == newresult.next_turn.enemies.length) {
+          newresult.victory = true
+        }
+      }
+      return newresult;
+    }
   }
   handleStatusEffects(resultobj, session, skill_data){
     return resultobj;
@@ -322,7 +387,7 @@ class GameController {
 
   generateDefaultPlayer() {
     let playerObj = {
-      current_hp: 30, //FIXME: start at max health
+      current_hp: 50,
       max_hp: 50,
       current_defense: 0,
       connection: 1.0,
@@ -331,13 +396,13 @@ class GameController {
         id: 1,
         cooldown:0
       },{
-        id: 6,
+        id: 2,
+        cooldown:0
+      },{
+        id: 9,
         cooldown:0
       },{
         id: 7,
-        cooldown:0
-      },{
-        id: 8,
         cooldown:0
       }],
       hardware_list:[{

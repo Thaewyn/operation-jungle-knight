@@ -8,8 +8,13 @@ fetch("/api/encounter/data", {
   let list = document.getElementById("enemy_list")
   for(let i=0; i< data.enemies.length; i++) {
     let enemy = document.createElement('li');
-    enemy.textContent = data.enemies[i].enemy_name + " (" + data.enemies[i].current_health + "/" + data.enemies[i].max_health + ")";
-    enemy.dataset.hp = data.enemies[i].current_health;
+    enemy.textContent = data.enemies[i].enemy_name;
+
+    let sp = document.createElement("span");
+    sp.textContent = " (" + data.enemies[i].current_health + "/" + data.enemies[i].max_health + ")";
+    sp.classList.add("enemy_"+data.enemies[i].id);
+    enemy.appendChild(sp);
+    // enemy.dataset.id = data.enemies[i].id;
     list.appendChild(enemy);
   }
 });
@@ -146,7 +151,12 @@ function handleTurnResults(api_data) {
           document.querySelector("input[value='"+id+"']").disabled = true
         }
       }
-      // + " (CD: "+data.attacks[i].data.cooldown+")"
+      for (let j = 0; j < api_data.data.next_turn.enemies.length; j++) {
+        // console.log("update enemy data:")
+        const enemy = api_data.data.next_turn.enemies[j];
+        // console.log(enemy);
+        document.querySelector(".enemy_"+enemy.id).textContent = " (" + enemy.current_health + "/" + enemy.max_health + ")"
+      }
     }
   }
 }
