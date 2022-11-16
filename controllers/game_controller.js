@@ -273,7 +273,12 @@ class GameController {
         const skill = attack_skill_list[i];
 
         //calculate outgoing damage
-        let damage = skill.power * newresult.next_turn.player.connection;
+        let damage = 0;
+        if (newresult.next_turn.player.statuses["supercharge"] > 0) {
+          damage = (skill.power * newresult.next_turn.player.connection) + newresult.next_turn.player.statuses["supercharge"];
+        } else {
+          damage = skill.power * newresult.next_turn.player.connection;
+        }
 
         let deadEnemies = 0;
 
@@ -361,16 +366,58 @@ class GameController {
     for (let i = 0; i < playerStatuses.length; i++) {
       const status = playerStatuses[i]; //'burn'
       const stacks = newresult.next_turn.player.statuses[playerStatuses[i]]; //2
-      switch (status) {
-        case "burn":
-          //burn handling
-          let damage = Math.floor(session.player.max_hp * 0.05);
-          next_turn.player.hp -= damage;
-          newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
-          break;
-      
-        default:
-          break;
+      let damage = 0;
+      if(stacks > 0) {
+        switch (status) {
+          case "burn":
+            //burn handling
+            damage = Math.floor(session.player.max_hp * 0.05);
+            newresult.next_turn.player.hp -= damage;
+            newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
+            // add event to event list
+            break;
+          case "poison":
+            //- deals damage every turn per stack, loses one stack per turn.
+            newresult.next_turn.player.hp -= stacks;
+            newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
+            break;
+          case "freeze":
+            //- if affected by freeze, all used skills get +1 cooldown (per stack)
+            newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
+            break;
+          case "glitch":
+            //- like blind. some numbers on the front end are scrambled / invisible. on until it is removed
+            // no end of turn behaviors.
+            break;
+          case "override":
+            //- % chance of skill activation becoming a different (valid, off cooldown) skill. 
+            //one stack affects one skill use, all stacks clear at end of turn
+            newresult.next_turn.player.statuses[playerStatuses[i]] = 0;
+            // TODO - implement later.
+            break;
+          case "supercharge":
+            //- all attack skills get +1 damage per stack, decays 1 stack per turn
+            newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
+            break;
+          case "regen":
+            //- opposite of poison. Heals 1 damage per turn per stack, decays one stack per turn
+            newresult.next_turn.player.hp += stacks;
+            if(newresult.next_turn.player.hp > session.player.max_hp) {
+              newresult.next_turn.player.hp = session.player.max_hp;
+            }
+            newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
+            break;
+          case "shield":
+            //- immune to 1 hit, lasts until used.
+            // no end of turn effects
+            break;
+          case "mist":
+            //- 50% miss chance on incoming hit, decays 1 stack per turn
+            newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
+            break;
+          default:
+            break;
+        }
       }
     }
     
@@ -388,7 +435,11 @@ class GameController {
       let skill = newresult.next_turn.player.skills[j];
       skill_data.forEach( used_skill => {
         if( used_skill.id == skill.id ){
-          newresult.next_turn.player.skills[j].cooldown = used_skill.cooldown;
+          if (newresult.next_turn.player.statuses["freeze"] > 0) {
+            newresult.next_turn.player.skills[j].cooldown = used_skill.cooldown + newresult.next_turn.player.statuses["freeze"];
+          } else {
+            newresult.next_turn.player.skills[j].cooldown = used_skill.cooldown;
+          }
         }
       })
       if(skill.cooldown > 0){
@@ -463,7 +514,7 @@ class GameController {
       return this.generateDefaultPlayer();
     } else {
       let initialized = current_player;
-      initialized.statuses = {burn: 2}; // FIXME: players should not start combat with negative statuses
+      initialized.statuses = {};
       for(let i=0; i<initialized.software_list.length; i++) {
         initialized.software_list[i].cooldown = 0
       }
