@@ -1,23 +1,9 @@
-// console.log("loaded createaccount.js")
-function displayModal(message) {
-  document.querySelector(".lightbox").style.display = "flex";
-  if (message) {
-    document.querySelector(".modal > .msg").textContent = message;
-  }
-}
+
 
 document.querySelector("#go_home_button")?.addEventListener("click", (e) => {
   window.location.href = "/";
 });
 
-document.querySelector(".closebutton > a")?.addEventListener("click", (e) => {
-  e.preventDefault();
-  hideModal();
-});
-
-function hideModal() {
-  document.querySelector(".lightbox").style.display = "none";
-}
 
 document.querySelector("#createform").addEventListener("submit", (e) => {
   e.preventDefault();
