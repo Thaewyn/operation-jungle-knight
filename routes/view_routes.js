@@ -33,7 +33,7 @@ module.exports = function(app) {
    * Run Routes
    */
   app.get("/run", function(req,res) {
-    // redirect based on current run state of sesion user
+    // redirect based on current run state of session user
     if(req.session && req.session.runid) {
       //no idea if this will be a problem, but we should only redirect if the session has a run id
       // we should also DEFINITELY verify that the run id is both valid and active and matches the user before anything else.

@@ -1,9 +1,6 @@
-
-
 document.querySelector("#go_home_button")?.addEventListener("click", (e) => {
   window.location.href = "/";
 });
-
 
 document.querySelector("#createform").addEventListener("submit", (e) => {
   e.preventDefault();
@@ -14,8 +11,7 @@ document.querySelector("#createform").addEventListener("submit", (e) => {
     pass: "",
   };
 
-  for (let i = 0; i < e.target.children.length; i++) {
-    let el = e.target.children[i];
+  for (const el of e.target.children) {
     if (el.type == "text") {
       data.user = el.value;
     } else if (el.type == "email") {

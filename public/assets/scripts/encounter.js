@@ -6,13 +6,12 @@ fetch("/api/encounter/data", {
 .then(data => {
   // console.log(data);
   let list = document.getElementById("enemy_list")
-  for(let i=0; i< data.enemies.length; i++) {
+  for(const en of data.enemies) {
     let enemy = document.createElement('li');
-    enemy.textContent = data.enemies[i].enemy_name;
-
+    enemy.textContent = en.enemy_name;
     let sp = document.createElement("span");
-    sp.textContent = " (" + data.enemies[i].current_health + "/" + data.enemies[i].max_health + ")";
-    sp.classList.add("enemy_"+data.enemies[i].id);
+    sp.textContent = " (" + en.current_health + "/" + en.max_health + ")";
+    sp.classList.add("enemy_"+en.id);
     enemy.appendChild(sp);
     // enemy.dataset.id = data.enemies[i].id;
     list.appendChild(enemy);
@@ -34,7 +33,6 @@ fetch("/api/player/stats", {
   document.getElementById("player_ob").textContent = data.obfuscation;
 });
 
-
 //can be fetched in parallel because they don't depend on each other.
 fetch("/api/player/attacks", {
   method: "GET"
@@ -42,25 +40,24 @@ fetch("/api/player/attacks", {
 .then(data => {
   // console.log(data);
   let list = document.getElementById("player_attacks")
-  for(let i=0; i< data.attacks.length; i++) {
+  for(const skill of data.attacks) {
     let item = document.createElement('li');
     let atk = document.createElement('label');
     //atk.classList.add("action").add("attack");
-    //atk.htmlFor = 
-    atk.textContent = data.attacks[i].data.name;
+    //atk.htmlFor =
+    atk.textContent = skill.data.name;
     let sp = document.createElement("span");
-    sp.textContent = " (CD: "+data.attacks[i].cooldown+")";
-    sp.classList.add("atk_"+data.attacks[i].id);
+    sp.textContent = " (CD: "+skill.cooldown+")";
+    sp.classList.add("atk_"+skill.id);
     atk.appendChild(sp);
     //atk.dataset.str = data.attacks[i].data.str;
     let chk = document.createElement("input");
     chk.type = "checkbox";
-    chk.value = data.attacks[i].id;
-    if(data.attacks[i].cooldown != 0) {
+    chk.value = skill.id;
+    if(skill.cooldown != 0) {
       // console.log("on cooldown!")
       chk.disabled = true
     }
-
     atk.appendChild(chk);
     item.appendChild(atk);
     list.appendChild(item);
@@ -129,9 +126,8 @@ function handleTurnResults(api_data) {
     if (api_data) {
       console.log(api_data.data.actions);
       let list = document.querySelectorAll("#player_attacks input:checked");
-      for (let i = 0; i < list.length; i++) {
-        const element = list[i];
-        element.checked = false;
+      for (const skill of list) {
+        skill.checked = false;
       }
       //update player stats
       let playerobj = api_data.data.next_turn.player;
@@ -142,18 +138,17 @@ function handleTurnResults(api_data) {
       document.getElementById("player_conn").textContent = playerobj.connection;
       document.getElementById("player_ob").textContent = playerobj.obfuscation;
       //update cooldowns
-      for(let i=0; i<playerobj.skills.length; i++) {
-        let id = playerobj.skills[i].id;
-        document.querySelector(".atk_"+id).textContent = " (CD: "+playerobj.skills[i].cooldown+")";
-        if (playerobj.skills[i].cooldown == 0) {
+      for(const skill of playerobj.skills) {
+        let id = skill.id;
+        document.querySelector(".atk_"+id).textContent = " (CD: "+skill.cooldown+")";
+        if (skill.cooldown == 0) {
           document.querySelector("input[value='"+id+"']").disabled = false
         } else {
           document.querySelector("input[value='"+id+"']").disabled = true
         }
       }
-      for (let j = 0; j < api_data.data.next_turn.enemies.length; j++) {
+      for (const enemy of api_data.data.next_turn.enemies) {
         // console.log("update enemy data:")
-        const enemy = api_data.data.next_turn.enemies[j];
         // console.log(enemy);
         document.querySelector(".enemy_"+enemy.id).textContent = " (" + enemy.current_health + "/" + enemy.max_health + ")"
       }

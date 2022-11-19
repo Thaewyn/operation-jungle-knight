@@ -9,7 +9,6 @@ const hardware_ref = require("../db/hardware_ref.json");
 
 class DBController {
   constructor() {
-
   }
   /**
    * For starting a new run.
@@ -35,8 +34,8 @@ class DBController {
 
   /**
    * During a run, get 3 options for the next 'server' to approach
-   * @param {int} userid 
-   * @param {int} runid 
+   * @param {int} userid
+   * @param {int} runid
    * @returns 3 server options
    */
   getServerSelection(userid, runid) {
@@ -62,18 +61,15 @@ class DBController {
   }
 
   /**
-   * 
+   *
    * @param {string} which_act expects "act_one" or "act_two", etc
    * @param {int} encounter_id the numerical id of the encounter in that act
-   * 
    * @returns an array containing instances of each enemy in the encounter
    */
   populateEncounterData(which_act, encounter_id) {
     let enemies = [];
-
     let encounter = encounter_ref[which_act][encounter_id]
-    for(let i=0; i<encounter.enemy_ids.length; i++) {
-      let enemy_id = encounter.enemy_ids[i];
+    for(const enemy_id of encounter.enemy_ids) {
       let enemy_template = enemy_ref[enemy_id]
       let new_enemy = {
         ...enemy_template,
@@ -84,10 +80,8 @@ class DBController {
       }
       enemies.push(new_enemy);
     }
-
     encounter.enemies = enemies;
     encounter.turn = 0;
-
     return encounter
   }
 
@@ -99,7 +93,6 @@ class DBController {
         if (err) {
           reject(err);
         }
-
         resolve(result);
       })
     })
@@ -119,7 +112,6 @@ class DBController {
             if (err) {
               reject(err);
             }
-    
             resolve(result);
           });
         })
@@ -141,7 +133,7 @@ class DBController {
 
   /**
    * Grab all software item information from json reference file.
-   * @param {Number} id 
+   * @param {Number} id
    */
   getSoftwareDetailsById(id) {
     if(software_ref[id]) {
