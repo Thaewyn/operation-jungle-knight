@@ -53,17 +53,11 @@ class GameController {
             hp: session.player.current_hp,
             defense: session.player.current_defense,
             statuses: session.player.statuses, //both positive and negative.
-            skills: [] //skill cooldown state.
+            skills: session.player.software_list, //skill cooldown state.
+            connection: session.player.connection,
+            obfuscation: session.player.obfuscation
           },
-          enemies: [
-            {
-              id: 1,
-              hp: 10,
-              defense: 5,
-              statuses: [],
-              intent: "attack"
-            }
-          ]
+          enemies: session.encounter.enemies
         }
       }
       /*
@@ -103,7 +97,7 @@ class GameController {
       result = this.handleStatusEffects(result, session, full_skill_data);
       result = this.handleEnemyAttacks(result, session, full_skill_data);
   
-      
+      result = this.handleCooldowns(result, session, full_skill_data);
       /**
        * Ability target keywords:
        * ALL
@@ -133,7 +127,7 @@ class GameController {
   }
 
   validateTurnSubmission(session, player_submission){
-    console.log("gc.validateTurnSubmission");
+    //console.log("gc.validateTurnSubmission");
     // TODO: make sure the player is not submitting more actions than they can do
     let max_attacks_per_turn = 3; //FIXME: arbitrary number, pull from session data?
     if (player_submission.attacks.length > max_attacks_per_turn) {
@@ -164,7 +158,7 @@ class GameController {
     //return false;
   }
   handlePlayerHeals(resultobj, session, skill_data){
-    console.log("gc.handlePlayerHeals");
+    //console.log("gc.handlePlayerHeals");
     // make a copy of the result object
     let newresult = resultobj;
     // go through the player submission and see if there are any heal skills
@@ -175,7 +169,7 @@ class GameController {
         heal_skill_list.push(skill);
       }
     }
-    console.log(heal_skill_list);
+    //console.log(heal_skill_list);
     //if there are none, return newresult, otherwise unchanged
     if(heal_skill_list.length == 0) {
       return newresult;
@@ -192,20 +186,19 @@ class GameController {
           //remove statuses if any.
           for (let k = 0; k < skill.status.length; k++) {
             const status = skill.status[k];
-            console.log("remove status: "+status);
+            //console.log("remove status: "+status);
             // remove status from next turn player status list
             newresult.next_turn.player.statuses[status] = 0
           }
         }
 
-        //have skill update cooldown and add effect to log
         let action = {
           type: 'player_heal',
           log_entry: skill.desc
         }
         newresult.actions.push(action);
       }
-      console.log("new hp: "+newresult.next_turn.player.hp+", max hp:" +session.player.max_hp)
+      //console.log("new hp: "+newresult.next_turn.player.hp+", max hp:" +session.player.max_hp)
       if(newresult.next_turn.player.hp > session.player.max_hp) {
         newresult.next_turn.player.hp = session.player.max_hp;
       }
@@ -214,17 +207,153 @@ class GameController {
       return newresult
     }
   }
-  handlePlayerDefense(resultobj, session, submission){
+  /**
+   * HandlePlayerDefense deals with player skills affecting Defense, Connection, and Obfuscation.
+   * Defense is an integer on a scale of 0-5, Connection is a float on the scale of 0-2,
+   * and Obfuscation is a positive or negative integer.
+   * @param {*} resultobj 
+   * @param {*} session 
+   * @param {*} submission 
+   * @returns 
+   */
+  handlePlayerDefense(resultobj, session, skill_data){
+    //console.log("gc.handlePlayerDefense");
+    let newresult = resultobj;
+    let defense_skill_list = [];
+    for (let i = 0; i < skill_data.length; i++) {
+      const skill = skill_data[i];
+      if (skill.effect == "DEFEND" || skill.effect == "CONNECT" || skill.effect == "OBFUSCATE") {
+        defense_skill_list.push(skill);
+      }
+    }
+    //console.log(defense_skill_list);
+    //if there are none, return newresult, otherwise unchanged
+    if(defense_skill_list.length == 0) {
+      return newresult;
+    } else {
+      for(let i=0; i<defense_skill_list.length; i++) {
+        const skill = defense_skill_list[i];
+        //individual handlers.
+        if(skill.effect == "DEFEND") {
+          //handle defense, 0-5
+          newresult.next_turn.player.defense += skill.power;
+          if(newresult.next_turn.player.defense > 5) {
+            newresult.next_turn.player.defense = 5;
+          }
+        } else if(skill.effect == "CONNECT") {
+          //handle connection, 0-2, float
+          newresult.next_turn.player.connection += skill.power;
+          if(newresult.next_turn.player.connection < 0) {
+            newresult.next_turn.player.connection = 0
+          } else if (newresult.next_turn.player.connection > 2) {
+            newresult.next_turn.player.connection = 2
+          }
+        } else if(skill.effect == "OBFUSCATE") {
+          //handle obfuscation, -inf - inf, integer
+          newresult.next_turn.player.obfuscation += skill.power;
+        }
+      }
+      return newresult;
+    }
+  }
+  handlePlayerAttacks(resultobj, session, skill_data){
+    // check skill data for attacks
+    let newresult = resultobj;
+    let attack_skill_list = [];
+    for (let i = 0; i < skill_data.length; i++) {
+      const skill = skill_data[i];
+      if (skill.effect == "DAMAGE") {
+        attack_skill_list.push(skill);
+      }
+    }
+    if(attack_skill_list.length == 0) {
+      return newresult;
+    } else {
+      for(let i=0; i<attack_skill_list.length; i++) {
+        const skill = attack_skill_list[i];
+
+        //calculate outgoing damage
+        let damage = skill.power * newresult.next_turn.player.connection;
+
+        let deadEnemies = 0;
+
+        let validTargets = 0;
+        let dir = null;
+        if (skill.targets == "FIRST1") {
+          validTargets = 1;
+          dir = "forward";
+        } else if (skill.targets == "FIRST2") {
+          validTargets = 2;
+          dir = "forward";
+        } else if (skill.targets == "ALL") {
+          validTargets = 50;
+          dir = "forward";
+        } else if (skill.targets == "LAST1") {
+          validTargets = 1;
+          dir = "backward";
+        }
+
+        if (dir == "forward") {
+          for (let i = 0; i < newresult.next_turn.enemies.length; i++) {
+            const target = newresult.next_turn.enemies[i];
+            if(target.current_health <= 0) {
+              deadEnemies += 1;
+            } else if (validTargets > 0) {
+              target.current_health -= damage;
+              validTargets--;
+              if(target.current_health <= 0) {
+                deadEnemies += 1;
+              }
+            } else {
+              break; //this only works if we're going front to back in detection
+            }
+          }
+        } else if (dir == "backward") {
+          for (let i = newresult.next_turn.enemies.length-1; i >= 0; i--) {
+            const target = newresult.next_turn.enemies[i];
+            if(target.current_health <= 0) {
+              deadEnemies += 1;
+            } else if (validTargets > 0) {
+              target.current_health -= damage;
+              validTargets--;
+              if(target.current_health <= 0) {
+                deadEnemies += 1;
+              }
+            } else {
+              break;
+            }
+          }
+        }
+
+        if(deadEnemies == newresult.next_turn.enemies.length) {
+          newresult.victory = true
+        }
+      }
+      return newresult;
+    }
+  }
+  handleStatusEffects(resultobj, session, skill_data){
     return resultobj;
   }
-  handlePlayerAttacks(resultobj, session, submission){
+  handleEnemyAttacks(resultobj, session, skill_data){
     return resultobj;
   }
-  handleStatusEffects(resultobj, session, submission){
-    return resultobj;
-  }
-  handleEnemyAttacks(resultobj, session, submission){
-    return resultobj;
+  handleCooldowns(resultobj, session, skill_data) {
+    let newresult = resultobj;
+
+    for (let j=0;j<newresult.next_turn.player.skills.length; j++) {
+      let skill = newresult.next_turn.player.skills[j];
+      skill_data.forEach( used_skill => {
+        if( used_skill.id == skill.id ){
+          newresult.next_turn.player.skills[j].cooldown = used_skill.cooldown;
+        }
+      })
+      if(skill.cooldown > 0){
+        newresult.next_turn.player.skills[j].cooldown -= 1;
+      }
+    }
+
+    return newresult;
   }
 
   /**
@@ -258,7 +387,7 @@ class GameController {
 
   generateDefaultPlayer() {
     let playerObj = {
-      current_hp: 30, //FIXME: start at max health
+      current_hp: 50,
       max_hp: 50,
       current_defense: 0,
       connection: 1.0,
@@ -267,10 +396,13 @@ class GameController {
         id: 1,
         cooldown:0
       },{
-        id: 4,
+        id: 2,
         cooldown:0
       },{
-        id: 5,
+        id: 9,
+        cooldown:0
+      },{
+        id: 7,
         cooldown:0
       }],
       hardware_list:[{

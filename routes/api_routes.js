@@ -177,6 +177,21 @@ module.exports = function(app) {
     }
   });
 
+  /**
+   * For the encounter page (to start), get basic player info.
+   * hp, statuses, etc.
+   */
+  app.get("/api/player/stats", (req,res) => {
+    if(req.session?.player) {
+      res.json(req.session.player);
+    } else {
+      res.json({
+        success:false,
+        msg: "Game Error: No player object to get data for"
+      });
+    }
+  });
+
   app.post("/api/encounter/turn", function(req,res) {
     //player submits their turn end data. Handle as appropriate.
     // TODO: brief data corruption validation. Logic validation happens elsewhere.
@@ -184,25 +199,32 @@ module.exports = function(app) {
     let result;
     if(req.body) {
       result = gc.handleCombat(req.session, req.body);
+
+      //apply result data to session data next.
+      if (result) { // if valid turn, and calculations were done.
+        req.session.player.current_hp = result.next_turn.player.hp;
+        req.session.player.statuses = result.next_turn.player.statuses;
+        req.session.player.defense = result.next_turn.player.defense;
+        req.session.player.connection = result.next_turn.player.connection;
+        req.session.player.obfuscation = result.next_turn.player.obfuscation;
+        req.session.player.software_list = result.next_turn.player.skills;
+
+        //TODO - req.session.player = dbc.buildPlayerSessionUpdate(result)
+      }
     } else {
       res.json({msg:"Invalid turn submission", success:false})
     }
     // FIXME: DEBUG LOGIC - forces game end after 2 encounters.
-    if(req.session.encounters) {
-      req.session.encounters += 1
-      if(req.session.encounters > 1) {
-        result.gameover = true
-      }
-    } else {
-      req.session.encounters = 1
-    }
-    //apply result data to session data next.
-
-    req.session.player.current_hp = result.next_turn.player.hp;
-    req.session.player.statuses = result.next_turn.player.statuses;
-    // req.session.encounter
+    // if(req.session.encounters) {
+    //   req.session.encounters += 1
+    //   if(req.session.encounters > 1) {
+    //     result.gameover = true
+    //   }
+    // } else {
+    //   req.session.encounters = 1
+    // }
     
-    console.log("encounters:"+req.session.encounters);
+    //console.log("encounters:"+req.session.encounters);
     // end DEBUG LOGIC
     res.json({msg:"submitted successfully.", data: result})
   });

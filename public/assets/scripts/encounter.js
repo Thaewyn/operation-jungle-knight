@@ -4,22 +4,43 @@ fetch("/api/encounter/data", {
   method: "GET"
 }).then(res => res.json())
 .then(data => {
-  console.log(data);
+  // console.log(data);
   let list = document.getElementById("enemy_list")
   for(let i=0; i< data.enemies.length; i++) {
     let enemy = document.createElement('li');
     enemy.textContent = data.enemies[i].enemy_name;
-    enemy.dataset.hp = data.enemies[i].current_health;
+
+    let sp = document.createElement("span");
+    sp.textContent = " (" + data.enemies[i].current_health + "/" + data.enemies[i].max_health + ")";
+    sp.classList.add("enemy_"+data.enemies[i].id);
+    enemy.appendChild(sp);
+    // enemy.dataset.id = data.enemies[i].id;
     list.appendChild(enemy);
   }
 });
+
+fetch("/api/player/stats", {
+  method: "GET"
+}).then(res => res.json())
+.then(data => {
+  // console.log("player data:")
+  // console.log(data);
+  let hp = document.getElementById("player_hp");
+  hp.textContent = "("+data.current_hp+"/"+data.max_hp+")";
+  hp.dataset.max = data.max_hp;
+  document.getElementById("player_status").textContent = JSON.stringify(data.statuses);
+  document.getElementById("player_def").textContent = data.current_defense;
+  document.getElementById("player_conn").textContent = data.connection;
+  document.getElementById("player_ob").textContent = data.obfuscation;
+});
+
 
 //can be fetched in parallel because they don't depend on each other.
 fetch("/api/player/attacks", {
   method: "GET"
 }).then(res => res.json())
 .then(data => {
-  console.log(data);
+  // console.log(data);
   let list = document.getElementById("player_attacks")
   for(let i=0; i< data.attacks.length; i++) {
     let item = document.createElement('li');
@@ -27,10 +48,18 @@ fetch("/api/player/attacks", {
     //atk.classList.add("action").add("attack");
     //atk.htmlFor = 
     atk.textContent = data.attacks[i].data.name;
-    atk.dataset.str = data.attacks[i].data.str;
+    let sp = document.createElement("span");
+    sp.textContent = " (CD: "+data.attacks[i].cooldown+")";
+    sp.classList.add("atk_"+data.attacks[i].id);
+    atk.appendChild(sp);
+    //atk.dataset.str = data.attacks[i].data.str;
     let chk = document.createElement("input");
     chk.type = "checkbox";
     chk.value = data.attacks[i].id;
+    if(data.attacks[i].cooldown != 0) {
+      // console.log("on cooldown!")
+      chk.disabled = true
+    }
 
     atk.appendChild(chk);
     item.appendChild(atk);
@@ -97,11 +126,37 @@ function handleTurnResults(api_data) {
   } else if (api_data.data.defeat) {
     //what do we do when the player loses?
   } else {
-    console.log(api_data.data.actions);
-    let list = document.querySelectorAll("#player_attacks input:checked");
-    for (let i = 0; i < list.length; i++) {
-      const element = list[i];
-      element.checked = false;
+    if (api_data) {
+      console.log(api_data.data.actions);
+      let list = document.querySelectorAll("#player_attacks input:checked");
+      for (let i = 0; i < list.length; i++) {
+        const element = list[i];
+        element.checked = false;
+      }
+      //update player stats
+      let playerobj = api_data.data.next_turn.player;
+      let hp = document.getElementById("player_hp")
+      hp.textContent = "("+playerobj.hp+"/"+hp.dataset.max+")";
+      document.getElementById("player_status").textContent = JSON.stringify(playerobj.statuses);
+      document.getElementById("player_def").textContent = playerobj.defense;
+      document.getElementById("player_conn").textContent = playerobj.connection;
+      document.getElementById("player_ob").textContent = playerobj.obfuscation;
+      //update cooldowns
+      for(let i=0; i<playerobj.skills.length; i++) {
+        let id = playerobj.skills[i].id;
+        document.querySelector(".atk_"+id).textContent = " (CD: "+playerobj.skills[i].cooldown+")";
+        if (playerobj.skills[i].cooldown == 0) {
+          document.querySelector("input[value='"+id+"']").disabled = false
+        } else {
+          document.querySelector("input[value='"+id+"']").disabled = true
+        }
+      }
+      for (let j = 0; j < api_data.data.next_turn.enemies.length; j++) {
+        // console.log("update enemy data:")
+        const enemy = api_data.data.next_turn.enemies[j];
+        // console.log(enemy);
+        document.querySelector(".enemy_"+enemy.id).textContent = " (" + enemy.current_health + "/" + enemy.max_health + ")"
+      }
     }
   }
 }
