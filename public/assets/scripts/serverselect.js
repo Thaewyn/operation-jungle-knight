@@ -7,7 +7,7 @@ fetch("/api/server/data", {
   console.log(data);
   let list = document.getElementById('server_options');
 
-  for(server in data) {
+  for(const server in data) {
     let item = document.createElement('li');
     let link = document.createElement('a');
     link.setAttribute('href','/api/server/'+data[server].id)

@@ -17,9 +17,8 @@ document.querySelector("#loginform").addEventListener("submit", (e) => {
     user: "",
     pass: ""
   }
-  
-  for (let i = 0; i < e.target.children.length; i++) {
-    let el = e.target.children[i];
+
+  for (const el of e.target.children) {
     // console.log(el.type)
     if (el.type == "text") {
       data.user = el.value

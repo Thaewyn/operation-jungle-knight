@@ -10,7 +10,6 @@ const hardware_ref = require("../db/hardware_ref.json");
 
 class DBController {
   constructor() {
-
   }
   /**
    * For starting a new run.
@@ -107,12 +106,10 @@ class DBController {
    *
    * @param {string} which_act expects "act_one" or "act_two", etc
    * @param {int} encounter_id the numerical id of the encounter in that act
-   *
    * @returns an array containing instances of each enemy in the encounter
    */
   populateEncounterData(which_act, encounter_id) {
     let enemies = [];
-
     let encounter = encounter_ref[which_act][encounter_id]
     for(const enemy_id of encounter.enemy_ids) {
       let enemy_template = enemy_ref[enemy_id]
@@ -125,10 +122,8 @@ class DBController {
       }
       enemies.push(new_enemy);
     }
-
     encounter.enemies = enemies;
     encounter.turn = 0;
-
     return encounter
   }
 
@@ -140,7 +135,6 @@ class DBController {
         if (err) {
           reject(err);
         }
-
         resolve(result);
       })
     })
@@ -160,7 +154,6 @@ class DBController {
             if (err) {
               reject(err);
             }
-
             resolve(result);
           });
         })
