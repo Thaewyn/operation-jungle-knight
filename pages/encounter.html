@@ -5,15 +5,51 @@
     <link rel="stylesheet" href="/assets/styles/main.css">
   </head>
   <body>
-    <h1>Encounter page</h1>
-    <p>If an encounter is live, this is the page for it.</p>
-    <ul>
-      <li>If the player is not on a run, they are forwarded to the 'start new run' page</li>
-      <li>If they are on a run but not on an encounter, they are forwarded to the 'select' or 'rewards' page as appropriate.</li>
-    </ul>
-    <p>If they are on an encounter, show enemies, show stats, show available actions, etc.</p>
-    <p>Allow the player to select and submit their intended actions for the turn.</p>
-    <p>After submit, show the player the results of these actions (refreshing page if necessary)</p>
+    <section class="main_content">
+      <div class="main_text">
+        <h1>Encounter page</h1>
+      </div>
+      
+      <p>If an encounter is live, this is the page for it.</p>
+      <ul>
+        <li>If the player is not on a run, they are forwarded to the 'start new run' page</li>
+        <li>If they are on a run but not on an encounter, they are forwarded to the 'select' or 'rewards' page as appropriate.</li>
+      </ul>
+      <p>If they are on an encounter, show enemies, show stats, show available actions, etc.</p>
+      <p>Allow the player to select and submit their intended actions for the turn.</p>
+      <p>After submit, show the player the results of these actions (refreshing page if necessary)</p>
+      <div class="enemies">
+        <ul id="enemy_list"></ul>
+      </div>
+      <div class="player">
+        <ul id="player_attacks"></ul>
+        <ul id="player_stats">
+          <li>HP: <span id="player_hp"></span></li>
+          <li>Statuses: <span id="player_status"></span></li>
+          <li>Defense: <span id="player_def"></span></li>
+          <li>Connection: <span id="player_conn"></span></li>
+          <li>Obfuscation: <span id="player_ob"></span></li>
+        </ul>
+      </div>
+      <div class="submit">
+        <button class="btn" id="submit_turn">Run Commands</button>
+      </div>
+    </section>
+    <section class="lightbox">
+      <div class="modal">
+        <p class="msg">This is a modal!</p>
+        <div class="closebutton">
+          <a href="#">X</a>
+        </div>
+        <div class="victory">
+          <p>Congratulations on your victory. Go to <a href="/run/encounter/rewards">rewards selection</a></p>
+        </div>
+        <div class="runcomplete">
+          <p>Congratulations! You have beaten the game! Go to <a href="/run/gameover">final win screen</a></p>
+        </div>
+      </div>
+    </section>
     <script src="/assets/scripts/main.js"></script>
+    <script src="/assets/scripts/encounter.js"></script>
   </body>
 </html>

@@ -5,9 +5,18 @@
     <link rel="stylesheet" href="/assets/styles/main.css">
   </head>
   <body>
-    <h1>Rewards page</h1>
-    <p>At the end of an encounter, when victory is declared, go here to show possible selections for a reward.</p>
-    <p>Displayed rewards are pre-selected by the server, based on the seed, and do *not* get randomized on page load.</p>
+    <section class="main_content">
+      <div class="main_text">
+        <h1>Rewards page</h1>
+        <p>At the end of an encounter, when victory is declared, go here to show possible selections for a reward.</p>
+      <p>Displayed rewards are pre-selected by the server, based on the seed, and do *not* get randomized on page load.</p>
+      </div>
+      
+      <div class="items">
+        <ul class="reward_holder" id="reward_items"></ul>
+      </div>
+    </section>
     <script src="/assets/scripts/main.js"></script>
+    <script src="/assets/scripts/rewards.js"></script>
   </body>
 </html>

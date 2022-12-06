@@ -1,0 +1,22 @@
+{
+  "0": {
+    "id": 0,
+    "attack_name": "something",
+    "attack_desc": "basic attack",
+    "animation_id": 0,
+    "effect_ids": [],
+    "damage_type": 0,
+    "damage_name": "scramble",
+    "strength": 5
+  },
+  "1": {
+    "id": 1,
+    "attack_name": "fireball",
+    "attack_desc": "shoots a fireball",
+    "animation_id": 1,
+    "effect_ids": [2],
+    "damage_type": 2,
+    "damage_name": "intercept",
+    "strength": 5
+  }
+}

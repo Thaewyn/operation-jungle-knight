@@ -6,16 +6,37 @@ fetch("/api/server/data", {
 .then(data => {
   console.log(data);
   let list = document.getElementById('server_options');
-  let item1 = document.createElement('li');
-  item1.textContent = data.server1.name
-  list.appendChild(item1);
-  let item2 = document.createElement('li');
-  item2.textContent = data.server2.name
-  list.appendChild(item2);
-  let item3 = document.createElement('li');
-  item3.textContent = data.server3.name
-  list.appendChild(item3);
+
+  for(const server in data) {
+    let item = document.createElement('li');
+    let link = document.createElement('a');
+    link.setAttribute('href','/api/server/'+data[server].id)
+    link.setAttribute('id', 'server_option');
+    link.classList.add('option');
+    link.textContent = server + " - " + data[server].loot_type;
+    link.dataset.id = data[server].id;
+    item.appendChild(link);
+    list.appendChild(item);
+  }
+
 })
 .catch(err => {
   console.log(err);
+});
+
+let picker = document.getElementById('server_options');
+picker.addEventListener('click',(e) => {
+  e.preventDefault();
+  console.log(e.target);
+  fetch("/api/run/server/"+e.target.dataset.id, {
+    method: "POST"
+  }).then(res => res.json())
+  .then(data => {
+    console.log(data);
+    if(data.success) {
+      window.location = "/run/encounter";
+    } else {
+      console.log(data.msg);
+    }
+  });
 })

@@ -8,6 +8,7 @@ CREATE TABLE users (
   id INT NOT NULL AUTO_INCREMENT,
   username VARCHAR(255) NOT NULL,
   pass VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
   create_date TIMESTAMP,
   last_login TIMESTAMP,
   currentrunid_fk INT,
@@ -95,7 +96,7 @@ CREATE TABLE enemy_ref (
   id INT NOT NULL AUTO_INCREMENT,
   enemy_name VARCHAR(255) NOT NULL,
   enemy_desc VARCHAR(255) NOT NULL,
-  defence INT NOT NULL,
+  defense INT NOT NULL,
   damage_type INT NOT NULL,
   health INT NOT NULL,
   PRIMARY KEY(id)

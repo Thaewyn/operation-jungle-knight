@@ -5,12 +5,43 @@
     <link rel="stylesheet" href="/assets/styles/main.css">
   </head>
   <body>
-    <h1>Home page</h1>
-    <p>Welcome to the game! Not much here except for a login form, or a 'play as guest' option.</p>
-    <ul>
-      <li>Login</li>
-      <li><a href="/run">Play as Guest</a> (progress will not be saved)</li>
-    </ul>
+    <section class="main_content">
+      <div class="logo">
+        <img src="assets/images/jungle-knight-logo.png">
+      </div>
+
+      <div class="main_text">
+        <p>Welcome to the game!</p>
+        <p>Not much here except for a login form, or a 'play as guest' option.</p> 
+      </div>
+      <div class="background">
+        
+      </div>
+      <div>
+        <ul class="login">
+          <li><a href="#" class="option" id="loginlink">Login</a></li>
+          <li><a href="/run" class="option" id="guestlink">Play as Guest</a><br><br>
+            (progress will not be saved)</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="lightbox">
+      <div class="modal">
+        <p class="msg">Please enter your login credentials</p>
+        <div class="closebutton">
+          <a href="#">X</a>
+        </div>
+        <form id="loginform">
+          <input type="text" name="username" placeholder="Username" />
+          <input type="email" name="email" placeholder="Email address" />
+          <input type="password" name="password" placeholder="Password" />
+          <button class="btn" type="submit">Submit</button>
+        </form>
+        <a href="/account/create">Create new account here.</a>
+      </div>
+    </section>
     <script src="/assets/scripts/main.js"></script>
+    <script src="/assets/scripts/homepage.js"></script>
   </body>
 </html>

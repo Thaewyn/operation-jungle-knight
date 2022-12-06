@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Jungle Knight - Create Account</title>
+    <link rel="stylesheet" href="/assets/styles/main.css">
+  </head>
+  <body>
+    <section class="main_content">
+      <div class="main_text">
+        <h1>Create account page</h1>
+        <p>Create a user account!</p>
+      </div>
+
+      <div class="input_form">
+        <form id="createform">
+          <input type="text" name="username" placeholder="Username" />
+          <input type="email" name="email" placeholder="Email address" />
+          <input type="password" name="password" placeholder="Password" />
+          <button class="btn" type="submit">Submit</button>
+        </form>
+      </div>
+
+    </section>
+    <section class="lightbox">
+      <div class="modal" id="error_modal">
+        <p class="msg">Account creation failed! Try again.</p>
+        <div class="closebutton">
+          <a href="#">X</a>
+        </div>
+        <button class="btn" id="go_home_button">Go to homepage</button>
+      </div>
+    </section>
+    <script src="/assets/scripts/main.js"></script>
+    <script src="/assets/scripts/createaccount.js"></script>
+  </body>
+</html>
