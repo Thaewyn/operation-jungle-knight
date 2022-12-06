@@ -78,19 +78,23 @@ document.getElementById("submit_turn").addEventListener("click", (e) => {
   if (list.length > 3) {
     //FIXME: These should be manually constructed modals. Javascript alerts and confirms are bad.
     alert("please select fewer than 3 actions");
-  } else if (list.length <= 0) {
-    //FIXME: These should be manually constructed modals. Javascript alerts and confirms are bad.
-    confirm("are you sure you don't want to take any actions this turn?");
   } else {
     //assume valid? or should there be a final condition here to make sure?
     let submissionData = {
       attacks: []
     }
-    list.forEach((el, i) => {
-      submissionData.attacks.push(el.value);
-    });
-    console.log("attempting to post submissiondata:");
-    console.log(submissionData);
+    if (list.length <= 0) {
+      //FIXME: These should be manually constructed modals. Javascript alerts and confirms are bad.
+      if(!confirm("are you sure you don't want to take any actions this turn?")) {
+        return;
+      }
+    } else {
+      list.forEach((el, i) => {
+        submissionData.attacks.push(el.value);
+      });
+    }
+    // console.log("attempting to post submissiondata:");
+    // console.log(submissionData);
     fetch("/api/encounter/turn",{
       method: "POST",
       headers: {
@@ -100,8 +104,8 @@ document.getElementById("submit_turn").addEventListener("click", (e) => {
       body: JSON.stringify(submissionData)
     }).then(res => res.json())
     .then(data => {
-      console.log("turn submitted, got response from the server:");
-      console.log(data);
+      // console.log("turn submitted, got response from the server:");
+      // console.log(data);
       handleTurnResults(data);
     });
   }

@@ -120,7 +120,7 @@ class GameController {
   }
 
   validateTurnSubmission(session, player_submission){
-    //console.log("gc.validateTurnSubmission");
+    // console.log("gc.validateTurnSubmission");
     // TODO: make sure the player is not submitting more actions than they can do
     let max_attacks_per_turn = 3; //FIXME: arbitrary number, pull from session data?
     if (player_submission.attacks.length > max_attacks_per_turn) {
@@ -136,15 +136,12 @@ class GameController {
           }
         });
         if(!is_valid) {
-          //console.log("did not find a valid match for id "+sub_id);
+          // console.log("did not find a valid match for id "+sub_id);
           return false;
         }
       }
-      //console.log("all submitted ids appear valid")
+      // console.log("all submitted ids appear valid")
       return true;
-    } else {
-      //console.log("player submission contained no attacks");
-      return false;
     }
     //return false;
   }
