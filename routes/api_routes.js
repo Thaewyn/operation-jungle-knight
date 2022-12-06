@@ -83,6 +83,7 @@ module.exports = function(app) {
       console.log(result.insertId);
       //crypt.createHash('sha256')
       req.session.runid = result.insertId;
+      //req.session.seedHash = 
 
       req.session.player = gc.generateDefaultPlayer();
 
@@ -161,8 +162,8 @@ module.exports = function(app) {
 
     if(req.session?.player) {
       let attackList = req.session.player.software_list;
-      for(let i=0; i<attackList.length; i++) {
-        attackList[i].data = dbc.getSoftwareDetailsById(attackList[i].id);
+      for(const skill of attackList) {
+        skill.data = dbc.getSoftwareDetailsById(skill.id);
       }
       res.json({
         attacks: attackList
@@ -222,7 +223,7 @@ module.exports = function(app) {
     // } else {
     //   req.session.encounters = 1
     // }
-    
+
     //console.log("encounters:"+req.session.encounters);
     // end DEBUG LOGIC
     res.json({msg:"submitted successfully.", data: result})
@@ -234,11 +235,11 @@ module.exports = function(app) {
       if(req.session.encounter.loot_type == "software") {
         let software_rewards = gc.generateSoftwareRewards(req.session.seed, req.session.userid);
         let items = [];
-    
-        for(let i=0; i<software_rewards.length; i++) {
-          items.push(dbc.getSoftwareDetailsById(software_rewards[i]));
+
+        for(const reward of software_rewards) {
+          items.push(dbc.getSoftwareDetailsById(reward));
         }
-    
+
         res.json({
           items
         })
@@ -247,8 +248,8 @@ module.exports = function(app) {
         let hardware_rewards = gc.generateHardwareRewards(req.session.seed, req.session.userid);
         let items = [];
 
-        for(let i=0; i<hardware_rewards.length; i++) {
-          items.push(dbc.getHardwareDetailsById(hardware_rewards[i]));
+        for(const reward of hardware_rewards) {
+          items.push(dbc.getHardwareDetailsById(reward));
         }
 
         res.json({

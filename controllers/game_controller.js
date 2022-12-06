@@ -12,7 +12,6 @@ class GameController {
    * @param {number} runid - run id currently being handled
    * @param {Object} turn_data - organized turn data containing the player's submitted Actions.
    * @param {number[]} turn_data.actions - software ids of actions being taken this turn.
-   * 
    * @returns {Object} The turn's result, ordered to include player action results, and enemy responses.
    */
   handleCombat(session, turn_data) {
@@ -21,17 +20,15 @@ class GameController {
     // they can only take actions if they have the matching software for the id, and it is off cooldown
     // they also can't submit more actions than their maximum actions per turn.
     // either of those cases will return an error.
-
     // get user game session information from database
-
     if(this.validateTurnSubmission(session, turn_data)) {
       console.log("submission valid");
-
       let result = {
         victory: false,
         gameover: false,
         defeat: false,
-        actions: [ //'actions' is basically a script for the front-end to animate, so make sure to include all required bits there.
+        actions: [
+          //'actions' is basically a script for the front-end to animate, so make sure to include all required bits there.
           // {
           //   type: 'player_attack_1',
           //   skill_id: 1,
@@ -60,33 +57,34 @@ class GameController {
           enemies: session.encounter.enemies
         }
       }
+
       /*
       Order of operations! This is going to be critical. Make sure things happen in the same order
       every time. No race conditions!
-  
-      Also note that we should hold on to 'Victory' and 'Defeat' booleans that can be set by any of 
+
+      Also note that we should hold on to 'Victory' and 'Defeat' booleans that can be set by any of
       these steps if we detect that the player should definitely win or lose. At that point, that
       becomes a hard override for any future actions. 'Defeat' skips everything else, and 'Victory'
       skips all 'negative' effects that don't carry over (heals should still take effect, etc).
-  
+
       Abilities:
       1: player heals. Any restorative effects. This includes both HP and 'Defense'
       2: defensive abilities, any buffs and protections. This includes Connection and Obfuscation.
       3: mass attacks (things that target multiple/all enemies)
       4: single target attacks (things that target a single enemy)
+
       Status effects:
       5: beneficial effects on the player
       6: beneficial effects on enemies
       7: detrimental effects on enemies
       8: detrimental effects on players
+
       Enemy behavior:
       9: each enemy attack, in order from front to back. No randomness here! This is simply resolving intents.
-  
       */
 
       let full_skill_data = [];
-      for (let i = 0; i < turn_data.attacks.length; i++) {
-        const id = turn_data.attacks[i];
+      for (const id of turn_data.attacks) {
         let skill = dbc.getSoftwareDetailsById(id);
         full_skill_data.push(skill);
       }
@@ -96,7 +94,6 @@ class GameController {
       result = this.handlePlayerAttacks(result, session, full_skill_data);
       result = this.handleStatusEffects(result, session, full_skill_data);
       result = this.handleEnemyAttacks(result, session, full_skill_data);
-  
       result = this.handleCooldowns(result, session, full_skill_data);
       /**
        * Ability target keywords:
@@ -108,22 +105,18 @@ class GameController {
        * SELF
        * LOWEST
        * HIGHEST
-       */
-      
-      /**
+       *
        * Ability effect keywords:
        * HEAL - heal player
        * DAMAGE - damage enemy
        * DEFEND - increase player defense
        */
-  
       return result;
     } else {
       console.log("submission invalid, return false");
       //invalid, return something?
       return false
     }
-
   }
 
   validateTurnSubmission(session, player_submission){
@@ -132,11 +125,9 @@ class GameController {
     let max_attacks_per_turn = 3; //FIXME: arbitrary number, pull from session data?
     if (player_submission.attacks.length > max_attacks_per_turn) {
       return false;
-    } else {
-      for (let i = 0; i < player_submission.attacks.length; i++) {
-        const sub_id = player_submission.attacks[i];
+    } else if (player_submission.attacks.length > 0) {
+      for (const sub_id of player_submission.attacks) {
         //console.log("player attack validation id: "+sub_id);
-  
         let is_valid = false;
         session.player.software_list.forEach(item => {
           if(item.id == sub_id && item.cooldown == 0) {
@@ -154,14 +145,14 @@ class GameController {
     }
     //return false;
   }
+
   handlePlayerHeals(resultobj, session, skill_data){
     //console.log("gc.handlePlayerHeals");
     // make a copy of the result object
     let newresult = resultobj;
     // go through the player submission and see if there are any heal skills
     let heal_skill_list = [];
-    for (let i = 0; i < skill_data.length; i++) {
-      const skill = skill_data[i];
+    for (const skill of skill_data) {
       if (skill.effect == "HEAL") {
         heal_skill_list.push(skill);
       }
@@ -175,20 +166,16 @@ class GameController {
       // pull out values for player current hp, player max hp
       // let cur_hp = session.player.current_hp;
       // let max_hp = session.player.max_hp;
-      for (let j = 0; j < heal_skill_list.length; j++) {
-        const skill = heal_skill_list[j];
+      for (const skill of heal_skill_list) {
         if (skill.targets == "SELF") {
           newresult.next_turn.player.hp += skill.power //TODO: modify by connection quality
-
           //remove statuses if any.
-          for (let k = 0; k < skill.status.length; k++) {
-            const status = skill.status[k];
+          for (const status of skill.status) {
             //console.log("remove status: "+status);
             // remove status from next turn player status list
             newresult.next_turn.player.statuses[status] = 0
           }
         }
-
         let action = {
           type: 'player_heal',
           log_entry: skill.desc
@@ -204,21 +191,21 @@ class GameController {
       return newresult
     }
   }
+
   /**
    * HandlePlayerDefense deals with player skills affecting Defense, Connection, and Obfuscation.
    * Defense is an integer on a scale of 0-5, Connection is a float on the scale of 0-2,
    * and Obfuscation is a positive or negative integer.
-   * @param {*} resultobj 
-   * @param {*} session 
-   * @param {*} submission 
-   * @returns 
+   * @param {*} resultobj
+   * @param {*} session
+   * @param {*} submission
+   * @returns
    */
   handlePlayerDefense(resultobj, session, skill_data){
     //console.log("gc.handlePlayerDefense");
     let newresult = resultobj;
     let defense_skill_list = [];
-    for (let i = 0; i < skill_data.length; i++) {
-      const skill = skill_data[i];
+    for (const skill of skill_data) {
       if (skill.effect == "DEFEND" || skill.effect == "CONNECT" || skill.effect == "OBFUSCATE") {
         defense_skill_list.push(skill);
       }
@@ -228,8 +215,7 @@ class GameController {
     if(defense_skill_list.length == 0) {
       return newresult;
     } else {
-      for(let i=0; i<defense_skill_list.length; i++) {
-        const skill = defense_skill_list[i];
+      for(const skill of defense_skill_list) {
         //individual handlers.
         if(skill.effect == "DEFEND") {
           //handle defense, 0-5
@@ -253,12 +239,12 @@ class GameController {
       return newresult;
     }
   }
+
   handlePlayerAttacks(resultobj, session, skill_data){
     // check skill data for attacks
     let newresult = resultobj;
     let attack_skill_list = [];
-    for (let i = 0; i < skill_data.length; i++) {
-      const skill = skill_data[i];
+    for (const skill of skill_data) {
       if (skill.effect == "DAMAGE") {
         attack_skill_list.push(skill);
       }
@@ -266,14 +252,16 @@ class GameController {
     if(attack_skill_list.length == 0) {
       return newresult;
     } else {
-      for(let i=0; i<attack_skill_list.length; i++) {
-        const skill = attack_skill_list[i];
-
+      for(const skill of attack_skill_list) {
         //calculate outgoing damage
-        let damage = skill.power * newresult.next_turn.player.connection;
-
+        let damage = 0;
+        if (newresult.next_turn.player.statuses["supercharge"] > 0) {
+          damage = (skill.power * newresult.next_turn.player.connection) + newresult.next_turn.player.statuses["supercharge"];
+        } else {
+          damage = skill.power * newresult.next_turn.player.connection;
+        }
+        
         let deadEnemies = 0;
-
         let validTargets = 0;
         let dir = null;
         if (skill.targets == "FIRST1") {
@@ -289,10 +277,8 @@ class GameController {
           validTargets = 1;
           dir = "backward";
         }
-
         if (dir == "forward") {
-          for (let i = 0; i < newresult.next_turn.enemies.length; i++) {
-            const target = newresult.next_turn.enemies[i];
+          for (const target of newresult.next_turn.enemies) {
             if(target.current_health <= 0) {
               deadEnemies += 1;
             } else if (validTargets > 0) {
@@ -306,6 +292,7 @@ class GameController {
             }
           }
         } else if (dir == "backward") {
+          // not refactored to for-of loop
           for (let i = newresult.next_turn.enemies.length-1; i >= 0; i--) {
             const target = newresult.next_turn.enemies[i];
             if(target.current_health <= 0) {
@@ -321,7 +308,6 @@ class GameController {
             }
           }
         }
-
         if(deadEnemies == newresult.next_turn.enemies.length) {
           newresult.victory = true
         }
@@ -329,27 +315,116 @@ class GameController {
       return newresult;
     }
   }
+
   handleStatusEffects(resultobj, session, skill_data){
-    return resultobj;
+    /*
+    Status effects:
+    5: beneficial effects on the player
+    6: beneficial effects on enemies
+    7: detrimental effects on enemies
+    8: detrimental effects on players
+
+    ---
+    Potential status effects
+    - burn - deals (%hp) damage every turn. 
+    - poison - deals damage every turn per stack, loses one stack per turn.
+    - freeze - if affected by freeze, all used skills get +1 cooldown (per stack)
+    - glitch - like blind. some numbers on the front end are scrambled / invisible. on until it is removed
+    - override - % chance of skill activation becoming a different (valid, off cooldown) skill. one stack affects one skill use, all stacks clear at end of turn
+    - supercharged - all attack skills get +1 damage per stack, decays 1 stack per turn
+    - regenerate - opposite of poison. Heals 1 damage per turn per stack, decays one stack per turn
+    - temporary shield - immune to 1 hit, lasts until used.
+    - mist form - 50% miss chance on incoming hit, decays 1 stack per turn
+
+    - trace handling
+    */
+    let newresult = resultobj;
+    // iterate through player, all enemies, deal with statuses.
+    let playerStatuses = Object.keys(newresult.next_turn.player.statuses)
+    
+    for (let i = 0; i < playerStatuses.length; i++) {
+      const status = playerStatuses[i]; //'burn'
+      const stacks = newresult.next_turn.player.statuses[playerStatuses[i]]; //2
+      let damage = 0;
+      if(stacks > 0) {
+        switch (status) {
+          case "burn":
+            //burn handling
+            damage = Math.floor(session.player.max_hp * 0.05);
+            newresult.next_turn.player.hp -= damage;
+            newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
+            // add event to event list
+            break;
+          case "poison":
+            //- deals damage every turn per stack, loses one stack per turn.
+            newresult.next_turn.player.hp -= stacks;
+            newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
+            break;
+          case "freeze":
+            //- if affected by freeze, all used skills get +1 cooldown (per stack)
+            newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
+            break;
+          case "glitch":
+            //- like blind. some numbers on the front end are scrambled / invisible. on until it is removed
+            // no end of turn behaviors.
+            break;
+          case "override":
+            //- % chance of skill activation becoming a different (valid, off cooldown) skill. 
+            //one stack affects one skill use, all stacks clear at end of turn
+            newresult.next_turn.player.statuses[playerStatuses[i]] = 0;
+            // TODO - implement later.
+            break;
+          case "supercharge":
+            //- all attack skills get +1 damage per stack, decays 1 stack per turn
+            newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
+            break;
+          case "regen":
+            //- opposite of poison. Heals 1 damage per turn per stack, decays one stack per turn
+            newresult.next_turn.player.hp += stacks;
+            if(newresult.next_turn.player.hp > session.player.max_hp) {
+              newresult.next_turn.player.hp = session.player.max_hp;
+            }
+            newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
+            break;
+          case "shield":
+            //- immune to 1 hit, lasts until used.
+            // no end of turn effects
+            break;
+          case "mist":
+            //- 50% miss chance on incoming hit, decays 1 stack per turn
+            newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
+            break;
+          default:
+            break;
+        }
+      }
+    }
+    
+
+
+    return newresult;
   }
+
   handleEnemyAttacks(resultobj, session, skill_data){
     return resultobj;
   }
+
   handleCooldowns(resultobj, session, skill_data) {
     let newresult = resultobj;
-
-    for (let j=0;j<newresult.next_turn.player.skills.length; j++) {
-      let skill = newresult.next_turn.player.skills[j];
+    for (const skill of newresult.next_turn.player.skills) {
       skill_data.forEach( used_skill => {
         if( used_skill.id == skill.id ){
-          newresult.next_turn.player.skills[j].cooldown = used_skill.cooldown;
+          if (newresult.next_turn.player.statuses["freeze"] > 0) {
+            newresult.next_turn.player.skills[j].cooldown = used_skill.cooldown + newresult.next_turn.player.statuses["freeze"];
+          } else {
+            newresult.next_turn.player.skills[j].cooldown = used_skill.cooldown;
+          }
         }
       })
       if(skill.cooldown > 0){
-        newresult.next_turn.player.skills[j].cooldown -= 1;
+        skill.cooldown -= 1;
       }
     }
-
     return newresult;
   }
 
@@ -361,7 +436,6 @@ class GameController {
   generateSoftwareRewards(seed, userid) {
     //TODO: generate ids based on seed data and user data.
     let list = [1,4,6];
-
     return list;
   }
 
@@ -373,7 +447,6 @@ class GameController {
   generateHardwareRewards(seed, userid) {
     //TODO: generate properly later.
     let list = [2,3,5];
-
     return list;
   }
 
@@ -407,7 +480,6 @@ class GameController {
       }],
       statuses:{}
     }
-
     return playerObj;
   }
 
@@ -417,16 +489,14 @@ class GameController {
       return this.generateDefaultPlayer();
     } else {
       let initialized = current_player;
-      initialized.statuses = {burn: 2}; // FIXME: players should not start combat with negative statuses
-      for(let i=0; i<initialized.software_list.length; i++) {
-        initialized.software_list[i].cooldown = 0
+      initialized.statuses = {};
+      for(const skill of initialized.software_list) {
+        skill.cooldown = 0
       }
       initialized.current_defense = 0;
       initialized.connection = 1.0;
       initialized.obfuscation = 0;
-
       //TODO: apply pre-combat relic effects
-
       return initialized
     }
   }
