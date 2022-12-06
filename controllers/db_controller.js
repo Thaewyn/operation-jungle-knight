@@ -1,5 +1,6 @@
 const db = require('../db');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const encounter_ref = require("../db/encounter_ref.json");
 const enemy_ref = require("../db/enemy_ref.json");
 const software_ref = require("../db/software_ref.json");
@@ -19,9 +20,23 @@ class DBController {
   startNewRun(userid, seed) {
     //NEEDS ERROR CHECKING eventually. Don't just trust the user id.
     console.log("DBController.startNewRun");
+
+    // check if user provided seed
+    if (!seed) {
+      // console.log("NO SEED PROVIDED BY USER");
+      seed = crypto.randomBytes(32).toString('hex');
+    } else {
+      // console.log("SEED PROVIDED BY USER");
+    }
+    console.log("SEED = " + seed);
+
+    // generate hash string from seed string
+    const hash = crypto.createHash('sha256').update(seed).digest('hex');
+    console.log("HASH = " + hash);
+
     return new Promise((resolve, reject) => {
       let querystring = 'INSERT INTO run (userid_fk, seed, run_start) VALUES (?, ?, ?)'
-      let q = db.query(querystring, [userid, seed, new Date()], (err, result) => {
+      let q = db.query(querystring, [userid, hash, new Date()], (err, result) => {
         if (err) {
           console.log("SQL Error in DBController.startNewRun");
           reject(err);
@@ -30,13 +45,34 @@ class DBController {
         resolve(result);
       });
       //console.log(q.sql);
-    })
+    });
+  }
+
+  /**
+   * Given the seed hash string for a given run, and a set 'fixed offset' for the function
+   * (not random, the offset for something like 'select a reward' will always be the same number or generated in the same way)
+   * and the maximum number of possible options to choose from, getPseudoRandom will return a number from 0-(maximum-1)
+   * @param {*} hash
+   * @param {*} fixedOffset
+   * @param {*} maximum
+   * @returns
+   */
+  getPseudoRandom(hash, fixedOffset, maximum) {
+    // create array of pseudorandom values from hashString
+    // const randomValues = hash.split('');
+    // return random value using fixedOffset
+    // const result = randomValues[fixedOffset];
+    const subset = hash.substring(fixedOffset, fixedOffset + 3);
+    const parsed = parseInt(subset, 16);
+    // check if value is below 'maximum'
+    const capped = parsed % maximum;
+    return capped;
   }
 
   /**
    * During a run, get 3 options for the next 'server' to approach
-   * @param {int} userid 
-   * @param {int} runid 
+   * @param {int} userid
+   * @param {int} runid
    * @returns 3 server options
    */
   getServerSelection(userid, runid) {
@@ -51,10 +87,16 @@ class DBController {
         //get run seed, act number, etc
         // process run seed from appropriate data
         //grab data from encounter_ref.json
+        // adjust fixedoffset to take in more inputs (number of encounters, etc)
+        // fixedOffsetChange = result[0].act_num*2 - result[0]encounter_num + 7
+        let encounterNum1 = this.getPseudoRandom(result[0].seed, 4, 10);
+        let encounterNum2 = this.getPseudoRandom(result[0].seed, 7, 10);
+        let encounterNum3 = this.getPseudoRandom(result[0].seed, 18, 10);
+        // console.log("encounternum1 sample: "+encounterNum1);
         let encounters = {
-          server1: encounter_ref.act_one[1],
-          server2: encounter_ref.act_one[2],
-          server3: encounter_ref.act_one[3]
+          server1: encounter_ref.act_one[encounterNum1],
+          server2: encounter_ref.act_one[encounterNum2],
+          server3: encounter_ref.act_one[encounterNum3]
         };
         resolve(encounters);
       });
@@ -62,18 +104,17 @@ class DBController {
   }
 
   /**
-   * 
+   *
    * @param {string} which_act expects "act_one" or "act_two", etc
    * @param {int} encounter_id the numerical id of the encounter in that act
-   * 
+   *
    * @returns an array containing instances of each enemy in the encounter
    */
   populateEncounterData(which_act, encounter_id) {
     let enemies = [];
 
     let encounter = encounter_ref[which_act][encounter_id]
-    for(let i=0; i<encounter.enemy_ids.length; i++) {
-      let enemy_id = encounter.enemy_ids[i];
+    for(const enemy_id of encounter.enemy_ids) {
       let enemy_template = enemy_ref[enemy_id]
       let new_enemy = {
         ...enemy_template,
@@ -119,7 +160,7 @@ class DBController {
             if (err) {
               reject(err);
             }
-    
+
             resolve(result);
           });
         })
@@ -141,7 +182,7 @@ class DBController {
 
   /**
    * Grab all software item information from json reference file.
-   * @param {Number} id 
+   * @param {Number} id
    */
   getSoftwareDetailsById(id) {
     if(software_ref[id]) {
