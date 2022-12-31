@@ -415,9 +415,9 @@ class GameController {
       skill_data.forEach( used_skill => {
         if( used_skill.id == skill.id ){
           if (newresult.next_turn.player.statuses["freeze"] > 0) {
-            newresult.next_turn.player.skills[j].cooldown = used_skill.cooldown + newresult.next_turn.player.statuses["freeze"];
+            skill.cooldown = used_skill.cooldown + newresult.next_turn.player.statuses["freeze"];
           } else {
-            newresult.next_turn.player.skills[j].cooldown = used_skill.cooldown;
+            skill.cooldown = used_skill.cooldown;
           }
         }
       })

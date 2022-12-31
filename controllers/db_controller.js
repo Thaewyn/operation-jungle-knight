@@ -1,5 +1,5 @@
 const db = require('../db');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const encounter_ref = require("../db/encounter_ref.json");
 const enemy_ref = require("../db/enemy_ref.json");
