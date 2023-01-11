@@ -406,7 +406,37 @@ class GameController {
   }
 
   handleEnemyAttacks(resultobj, session, skill_data){
-    return resultobj;
+    let newresult = resultobj;
+    // console.log(newresult.next_turn.enemies);
+    // console.log(session.encounter.enemies);
+
+    for (const enemy of newresult.next_turn.enemies) {
+      // const enemy = newresult.next_turn.enemies[i];
+      if (enemy.current_health > 0) {
+        // console.log(enemy);
+        //get that enemy's current attack:
+        let att = enemy.enemy_attacks[enemy.next_attack_intent];
+  
+        if(att.strength > 0) {
+          //hit the player
+          let damage = (att.strength * ((5-newresult.next_turn.player.defense)/5));
+          // console.log("damage = "+damage);
+          newresult.next_turn.player.hp -= damage;
+        }
+
+        enemy.next_attack_intent += 1;
+        if(enemy.next_attack_intent >= enemy.enemy_attacks.length) {
+          enemy.next_attack_intent = 0;
+        }
+      }
+    }
+
+    //if player hp <= 0, handle game over.
+    if (newresult.next_turn.player.hp <= 0) {
+      newresult.defeat = true;
+    }
+
+    return newresult;
   }
 
   handleCooldowns(resultobj, session, skill_data) {
