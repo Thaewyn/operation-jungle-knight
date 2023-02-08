@@ -396,6 +396,9 @@ class GameController {
             //- 50% miss chance on incoming hit, decays 1 stack per turn
             newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
             break;
+          case "decon":
+            // -- 'debuff' as status effect, reduce player Connection stat.
+            break;
           default:
             break;
         }
