@@ -92,6 +92,18 @@ module.exports = function(app) {
       console.log(err);
     })
   });
+  /**
+   * Abandon run. Can abandon at any point, this assumes the user has already confirmed 'yes'
+   */
+  app.post("/api/run/abandon", (req,res) => {
+    if(req.session?.runid) {
+      delete req.session.runid;
+      res.json({deleted:true});
+    } else {
+      res.json({deleted:false});
+    }
+  });
+
   app.get("/api/runstatus", (req, res) => {
     if(req.session?.runid) {
       res.json({active: true, runid: req.session.runid});
