@@ -260,6 +260,8 @@ class GameController {
         } else {
           damage = skill.power * newresult.next_turn.player.connection;
         }
+        // in favor of the player, always round up
+        damage = Math.ceil(damage);
         
         let deadEnemies = 0;
         let validTargets = 0;
@@ -394,6 +396,9 @@ class GameController {
             //- 50% miss chance on incoming hit, decays 1 stack per turn
             newresult.next_turn.player.statuses[playerStatuses[i]] -= 1; //reduce stacks by 1
             break;
+          case "decon":
+            // -- 'debuff' as status effect, reduce player Connection stat.
+            break;
           default:
             break;
         }
@@ -406,7 +411,48 @@ class GameController {
   }
 
   handleEnemyAttacks(resultobj, session, skill_data){
-    return resultobj;
+    let newresult = resultobj;
+    // console.log(newresult.next_turn.enemies);
+    // console.log(session.encounter.enemies);
+
+    for (const enemy of newresult.next_turn.enemies) {
+      // const enemy = newresult.next_turn.enemies[i];
+      if (enemy.current_health > 0) {
+        // console.log(enemy);
+        //get that enemy's current attack:
+        let att = enemy.enemy_attacks[enemy.next_attack_intent];
+  
+        if(att.strength > 0) {
+          //hit the player - advantage players, always round down.
+          let damage = Math.floor(att.strength * ((5-newresult.next_turn.player.defense)/5));
+          // console.log("damage = "+damage);
+          newresult.next_turn.player.hp -= damage;
+        }
+
+        //apply statuses to player
+        if(att.status_effects.length > 0) {
+          for (const newStatus of att.status_effects) {
+            if (newresult.next_turn.player.statuses[newStatus]) {
+              newresult.next_turn.player.statuses[newStatus] += 1
+            } else {
+              newresult.next_turn.player.statuses[newStatus] = 1
+            }
+          }
+        }
+
+        enemy.next_attack_intent += 1;
+        if(enemy.next_attack_intent >= enemy.enemy_attacks.length) {
+          enemy.next_attack_intent = 0;
+        }
+      }
+    }
+
+    //if player hp <= 0, handle game over.
+    if (newresult.next_turn.player.hp <= 0) {
+      newresult.defeat = true;
+    }
+
+    return newresult;
   }
 
   handleCooldowns(resultobj, session, skill_data) {

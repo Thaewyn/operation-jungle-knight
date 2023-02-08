@@ -4,7 +4,7 @@
     "attack_name": "something",
     "attack_desc": "basic attack",
     "animation_id": 0,
-    "effect_ids": [],
+    "status_effects": [],
     "damage_type": 0,
     "damage_name": "scramble",
     "strength": 5
@@ -14,7 +14,47 @@
     "attack_name": "fireball",
     "attack_desc": "shoots a fireball",
     "animation_id": 1,
-    "effect_ids": [2],
+    "status_effects": ["burn"],
+    "damage_type": 2,
+    "damage_name": "intercept",
+    "strength": 5
+  },
+  "2": {
+    "id": 2,
+    "attack_name": "stab",
+    "attack_desc": "stabs you with a knife",
+    "animation_id": 1,
+    "status_effects": [],
+    "damage_type": 2,
+    "damage_name": "intercept",
+    "strength": 2
+  },
+  "3": {
+    "id": 3,
+    "attack_name": "serrate",
+    "attack_desc": "tear with a ragged edge",
+    "animation_id": 1,
+    "status_effects": [],
+    "damage_type": 2,
+    "damage_name": "intercept",
+    "strength": 7
+  },
+  "4": {
+    "id": 4,
+    "attack_name": "desynchronize",
+    "attack_desc": "reduces player connection level",
+    "animation_id": 1,
+    "status_effects": ["decon"],
+    "damage_type": 2,
+    "damage_name": "intercept",
+    "strength": 0
+  },
+  "5": {
+    "id": 5,
+    "attack_name": "fireball",
+    "attack_desc": "shoots a fireball",
+    "animation_id": 1,
+    "status_effects": [],
     "damage_type": 2,
     "damage_name": "intercept",
     "strength": 5

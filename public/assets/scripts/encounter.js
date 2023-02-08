@@ -4,7 +4,7 @@ fetch("/api/encounter/data", {
   method: "GET"
 }).then(res => res.json())
 .then(data => {
-  // console.log(data);
+  console.log(data);
   let list = document.getElementById("enemy_list")
   for(const en of data.enemies) {
     let enemy = document.createElement('li');
@@ -13,6 +13,11 @@ fetch("/api/encounter/data", {
     sp.textContent = " (" + en.current_health + "/" + en.max_health + ")";
     sp.classList.add("enemy_"+en.id);
     enemy.appendChild(sp);
+    let intent = document.createElement("span");
+    // console.log(att);
+    intent.textContent = " - " + en.enemy_attacks[en.next_attack_intent]?.attack_name;
+    intent.classList.add("intent_"+en.id);
+    enemy.appendChild(intent);
     // enemy.dataset.id = data.enemies[i].id;
     list.appendChild(enemy);
   }
@@ -126,6 +131,9 @@ function handleTurnResults(api_data) {
     }
   } else if (api_data.data.defeat) {
     //what do we do when the player loses?
+    console.log("YOU LOSE.");
+
+    //TODO: handle losing combat.
   } else {
     if (api_data) {
       console.log(api_data.data.actions);
@@ -155,6 +163,8 @@ function handleTurnResults(api_data) {
         // console.log("update enemy data:")
         // console.log(enemy);
         document.querySelector(".enemy_"+enemy.id).textContent = " (" + enemy.current_health + "/" + enemy.max_health + ")"
+
+        document.querySelector(".intent_"+enemy.id).textContent = " - " + enemy.enemy_attacks[enemy.next_attack_intent]?.attack_name;
       }
     }
   }
