@@ -11,13 +11,13 @@
   },
   "1": {
     "id": 1,
-    "enemy_name": "Sniffer",
-    "enemy_desc": "Sniffer attempts to identify your precise location.",
-    "defense": 2,
+    "enemy_name": "Pyro",
+    "enemy_desc": "Pyro makes you burn.",
+    "defense": 1,
     "damage_type": 1,
     "damage_name": "decode",
-    "max_health": 8,
-    "attack_ids": [3,2,4]
+    "max_health": 3,
+    "attack_ids": [1]
   },
   "2": {
     "id": 2,
@@ -63,6 +63,16 @@
     "id": 6,
     "enemy_name": "Trapdoor",
     "enemy_desc": "Trapdoor baits an attack and counterattacks.",
+    "defense": 2,
+    "damage_type": 1,
+    "damage_name": "decode",
+    "max_health": 8,
+    "attack_ids": [3,2,4]
+  },
+  "7": {
+    "id": 7,
+    "enemy_name": "Sniffer",
+    "enemy_desc": "Sniffer attempts to identify your precise location.",
     "defense": 2,
     "damage_type": 1,
     "damage_name": "decode",

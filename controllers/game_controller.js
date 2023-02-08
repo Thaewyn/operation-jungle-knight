@@ -260,6 +260,8 @@ class GameController {
         } else {
           damage = skill.power * newresult.next_turn.player.connection;
         }
+        // in favor of the player, always round up
+        damage = Math.ceil(damage);
         
         let deadEnemies = 0;
         let validTargets = 0;
@@ -418,10 +420,21 @@ class GameController {
         let att = enemy.enemy_attacks[enemy.next_attack_intent];
   
         if(att.strength > 0) {
-          //hit the player
-          let damage = (att.strength * ((5-newresult.next_turn.player.defense)/5));
+          //hit the player - advantage players, always round down.
+          let damage = Math.floor(att.strength * ((5-newresult.next_turn.player.defense)/5));
           // console.log("damage = "+damage);
           newresult.next_turn.player.hp -= damage;
+        }
+
+        //apply statuses to player
+        if(att.status_effects.length > 0) {
+          for (const newStatus of att.status_effects) {
+            if (newresult.next_turn.player.statuses[newStatus]) {
+              newresult.next_turn.player.statuses[newStatus] += 1
+            } else {
+              newresult.next_turn.player.statuses[newStatus] = 1
+            }
+          }
         }
 
         enemy.next_attack_intent += 1;
