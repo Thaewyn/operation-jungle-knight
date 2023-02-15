@@ -14,7 +14,7 @@
     },
     "2": {
       "id": 2,
-      "enemy_ids": [2,3,4],
+      "enemy_ids": [2,3,4,5],
       "elite": true,
       "loot_type": "hardware"
     },
@@ -26,7 +26,7 @@
     },
     "4": {
       "id": 4,
-      "enemy_ids": [1,2,3],
+      "enemy_ids": [1,2],
       "elite": false,
       "loot_type": "software"
     },
@@ -44,7 +44,7 @@
     },
     "7": {
       "id": 7,
-      "enemy_ids": [1,2,3],
+      "enemy_ids": [2],
       "elite": false,
       "loot_type": "software"
     },
@@ -58,6 +58,42 @@
       "id": 9,
       "enemy_ids": [1,2,6],
       "elite": true,
+      "loot_type": "software"
+    },
+    "10": {
+      "id": 10,
+      "enemy_ids": [5,2],
+      "elite": false,
+      "loot_type": "software"
+    },
+    "11": {
+      "id": 11,
+      "enemy_ids": [5,1,5],
+      "elite": false,
+      "loot_type": "hardware"
+    },
+    "12": {
+      "id": 12,
+      "enemy_ids": [1,1,1],
+      "elite": false,
+      "loot_type": "software"
+    },
+    "13": {
+      "id": 13,
+      "enemy_ids": [6,0],
+      "elite": false,
+      "loot_type": "software"
+    },
+    "14": {
+      "id": 14,
+      "enemy_ids": [6,6,6],
+      "elite": true,
+      "loot_type": "hardware"
+    },
+    "15": {
+      "id": 15,
+      "enemy_ids": [3,4],
+      "elite": false,
       "loot_type": "software"
     }
   },

@@ -98,6 +98,10 @@ module.exports = function(app) {
   app.post("/api/run/abandon", (req,res) => {
     if(req.session?.runid) {
       delete req.session.runid;
+      //FIXME - update run table in db to set 'is_active' false
+      /**
+       * let querystring = 'SELECT * FROM run WHERE id = ? AND userid_fk = ? AND is_active = 1';
+       */
       res.json({deleted:true});
     } else {
       res.json({deleted:false});
@@ -118,19 +122,23 @@ module.exports = function(app) {
   app.post("/api/run/server/:id", function(req,res) {
     //player selects a server to approach. Handle as appropriate.
     //TODO: is the user allowed to select a server at this stage?
-    req.session.encounter = dbc.populateEncounterData("act_one", req.params.id); //FIXME: get actual act name later.
-
-    //update encounter data with player starting status.
-    if(req.session?.player) {
-      //we already have the player object, initialize for combat
-      req.session.player = gc.initializePlayerForCombat(req.session.player);
-    } else {
-      //no player object, create one for first combat
-      req.session.player = gc.generateDefaultPlayer();
-    }
-
-    if(req.session.encounter) {
-      res.json({success:true, msg: "server selected: "+req.params.id});
+    if(parseInt(req.params.id)) {
+      req.session.encounter = dbc.populateEncounterData("act_one", req.params.id); //FIXME: get actual act name later.
+  
+      //update encounter data with player starting status.
+      if(req.session?.player) {
+        //we already have the player object, initialize for combat
+        req.session.player = gc.initializePlayerForCombat(req.session.player);
+      } else {
+        //no player object, create one for first combat
+        req.session.player = gc.generateDefaultPlayer();
+      }
+  
+      if(req.session.encounter) {
+        res.json({success:true, msg: "server selected: "+req.params.id});
+      } else {
+        res.json({success:false, msg: "Game error: no encounter generated."});
+      }
     } else {
       res.json({success:false, msg: "Game error: no encounter generated."});
     }
@@ -142,7 +150,13 @@ module.exports = function(app) {
   app.get("/api/server/data", (req,res) => {
     //asynchronous function to send page data to server selection page for a single run.
     if (req.session?.userid && req.session?.runid) {
-      dbc.getServerSelection(req.session.userid, req.session.runid).then(result => {
+
+      if(req.session.encounters) { //FIXME - need a better place for this value.
+        req.session.encounters += 1;
+      } else {
+        req.session.encounters = 1;
+      }
+      dbc.getServerSelection(req.session.userid, req.session.runid, req.session.encounters).then(result => {
         res.json(result);
       }).catch(err => {
         console.log(err);
@@ -226,18 +240,7 @@ module.exports = function(app) {
     } else {
       res.json({msg:"Invalid turn submission", success:false})
     }
-    // FIXME: DEBUG LOGIC - forces game end after 2 encounters.
-    // if(req.session.encounters) {
-    //   req.session.encounters += 1
-    //   if(req.session.encounters > 1) {
-    //     result.gameover = true
-    //   }
-    // } else {
-    //   req.session.encounters = 1
-    // }
-
-    //console.log("encounters:"+req.session.encounters);
-    // end DEBUG LOGIC
+    
     res.json({msg:"submitted successfully.", data: result})
   });
 
@@ -245,28 +248,17 @@ module.exports = function(app) {
     //Right now, fixed item IDs, eventually generate item IDs from seed
     if(req.session?.encounter) {
       if(req.session.encounter.loot_type == "software") {
-        let software_rewards = gc.generateSoftwareRewards(req.session.seed, req.session.userid);
-        let items = [];
-
-        for(const reward of software_rewards) {
-          items.push(dbc.getSoftwareDetailsById(reward));
-        }
-
-        res.json({
-          items
-        })
+        dbc.generateSoftwareRewards(req.session.runid, req.session.userid).then(items => {
+          res.json({
+            items
+          })
+        });
       } else if (req.session.encounter.loot_type == "hardware") {
-
-        let hardware_rewards = gc.generateHardwareRewards(req.session.seed, req.session.userid);
-        let items = [];
-
-        for(const reward of hardware_rewards) {
-          items.push(dbc.getHardwareDetailsById(reward));
-        }
-
-        res.json({
-          items
-        })
+        dbc.generateHardwareRewards(req.session.runid, req.session.userid).then(items => {
+          res.json({
+            items
+          })
+        });
       } else {
         //no reward type
         res.json({
