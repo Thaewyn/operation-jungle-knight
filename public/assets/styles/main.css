@@ -77,6 +77,10 @@ ul, li {
   cursor: pointer;
 }
 
+.run_menu li:first-child {
+  margin-bottom: 35px;
+}
+
 @keyframes button-border {
   from {border-color: var(--green);}
   to {border-color: var(--bluegrey);}
