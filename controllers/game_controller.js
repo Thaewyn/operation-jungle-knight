@@ -474,28 +474,6 @@ class GameController {
     return newresult;
   }
 
-  /**
-   * Generate a list of valid Software item ids based on inputs
-   * @param {String} seed hex value seed string
-   * @param {Number} userid unique identifier of the user
-   */
-  generateSoftwareRewards(seed, userid) {
-    //TODO: generate ids based on seed data and user data.
-    let list = [1,4,6];
-    return list;
-  }
-
-  /**
-   * Generate a list of valid Hardware item ids based on inputs
-   * @param {String} seed hex value seed string
-   * @param {Number} userid unique identifier of the user
-   */
-  generateHardwareRewards(seed, userid) {
-    //TODO: generate properly later.
-    let list = [2,3,5];
-    return list;
-  }
-
   validateRewardSelection(seed, userid, rewardid) {
     //FIXME: actually validate
     return true

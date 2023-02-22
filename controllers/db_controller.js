@@ -11,6 +11,9 @@ const enemy_attack_ref = require("../db/enemy_attack_ref.json");
 
 class DBController {
   constructor() {
+    this.ACT1_ENCOUNTER_LEN = Object.keys(encounter_ref.act_one).length;
+    this.SOFTWARE_LEN = Object.keys(software_ref).length;
+    this.HARDWARE_LEN = Object.keys(hardware_ref).length;
   }
   /**
    * For starting a new run.
@@ -73,11 +76,13 @@ class DBController {
    * During a run, get 3 options for the next 'server' to approach
    * @param {int} userid
    * @param {int} runid
+   * @param {int} encounterNum which encounter is this in the run?
    * @returns 3 server options
    */
-  getServerSelection(userid, runid) {
+  getServerSelection(userid, runid, encounterNum) {
     console.log("DBController.getserverselection");
     console.log("userid = "+userid+", runid = "+runid);
+    console.log(encounterNum);
     return new Promise((resolve, reject) => {
       let querystring = 'SELECT * FROM run WHERE id = ? AND userid_fk = ? AND is_active = 1';
       db.query(querystring, [runid, userid], (err, result) => {
@@ -89,14 +94,14 @@ class DBController {
         //grab data from encounter_ref.json
         // adjust fixedoffset to take in more inputs (number of encounters, etc)
         // fixedOffsetChange = result[0].act_num*2 - result[0]encounter_num + 7
-        let encounterNum1 = this.getPseudoRandom(result[0].seed, 4, 10);
-        let encounterNum2 = this.getPseudoRandom(result[0].seed, 7, 10);
-        let encounterNum3 = this.getPseudoRandom(result[0].seed, 18, 10);
+        let encounterOpt1 = this.getPseudoRandom(result[0].seed, 4+encounterNum, this.ACT1_ENCOUNTER_LEN);
+        let encounterOpt2 = this.getPseudoRandom(result[0].seed, 7+encounterNum, this.ACT1_ENCOUNTER_LEN);
+        let encounterOpt3 = this.getPseudoRandom(result[0].seed, 18+encounterNum, this.ACT1_ENCOUNTER_LEN);
         // console.log("encounternum1 sample: "+encounterNum1);
         let encounters = {
-          server1: encounter_ref.act_one[encounterNum1],
-          server2: encounter_ref.act_one[encounterNum2],
-          server3: encounter_ref.act_one[encounterNum3]
+          server1: encounter_ref.act_one[encounterOpt1],
+          server2: encounter_ref.act_one[encounterOpt2],
+          server3: encounter_ref.act_one[encounterOpt3]
         };
         resolve(encounters);
       });
@@ -204,6 +209,62 @@ class DBController {
     } else {
       return "ERR: No hardware with that ID";
     }
+  }
+
+  /**
+   * Generate a list of valid Software item ids based on inputs
+   * @param {String} runid id on the run table
+   * @param {Number} userid unique identifier of the user
+   */
+  generateSoftwareRewards(runid, userid) {
+    // let howMany = this.getPseudoRandom(seed, 4, this.ACT1_ENCOUNTER_LEN);
+
+    return new Promise((resolve, reject) => {
+      let querystring = 'SELECT * FROM run WHERE id = ? AND userid_fk = ? AND is_active = 1';
+      db.query(querystring, [runid, userid], (err, result) => {
+        if (err) {
+          reject(err);
+        }
+        let items = [];
+        let seed = result[0].seed;
+
+        for(let i=0; i<3; i++) {
+          let rewardId = this.getPseudoRandom(seed, i*2, this.SOFTWARE_LEN);
+          let item = this.getSoftwareDetailsById(rewardId);
+          items.push(item);
+        }
+
+        resolve(items);
+      });
+    });
+
+  }
+
+  /**
+   * Generate a list of valid Hardware item ids based on inputs
+   * @param {String} runid id on the run table
+   * @param {Number} userid unique identifier of the user
+   */
+  generateHardwareRewards(runid, userid) {
+
+    return new Promise((resolve, reject) => {
+      let querystring = 'SELECT * FROM run WHERE id = ? AND userid_fk = ? AND is_active = 1';
+      db.query(querystring, [runid, userid], (err, result) => {
+        if (err) {
+          reject(err);
+        }
+        let items = [];
+        let seed = result[0].seed;
+
+        for(let i=0; i<3; i++) {
+          let rewardId = this.getPseudoRandom(seed, i*2, this.HARDWARE_LEN);
+          let item = this.getHardwareDetailsById(rewardId);
+          items.push(item);
+        }
+
+        resolve(items);
+      });
+    });
   }
 }
 
